@@ -53,6 +53,10 @@ Ajoutez `https://github.com/jptstar/wago_comm` comme dépôt personnalisé HACS 
 
 Installez ensuite **WAGO 750-8212 PFC200**, redémarrez Home Assistant et ajoutez l'intégration depuis **Paramètres → Appareils et services → Ajouter une intégration**.
 
+### Versionnement HACS
+
+Les versions sont publiées sous forme de **GitHub Releases**. Un workflow GitHub crée automatiquement la release correspondant à la valeur `version` du `manifest.json` à chaque changement de version. HACS peut ainsi comparer correctement la version installée et la dernière version distante.
+
 ## Mémoire Modbus par défaut
 
 Les valeurs correspondent à la table CODESYS fournie :
@@ -135,4 +139,4 @@ Les flows fournis utilisent le **Coil 21 à la fois pour “Gazon pool house” 
 
 ## Version
 
-**0.1.5**
+**0.1.6**
