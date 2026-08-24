@@ -18,7 +18,7 @@ from .csv_io import export_csv_text
 from .storage import async_load_points
 
 _EXPORT_TOKENS = "csv_export_tokens"
-_EXPORT_TOKEN_TTL = 300.0
+_EXPORT_TOKEN_TTL = 600.0
 
 
 def _safe_filename(value: str) -> str:
@@ -34,11 +34,10 @@ def _token_store(hass: HomeAssistant) -> dict[str, dict[str, Any]]:
 
 
 def create_csv_export_token(hass: HomeAssistant, entry_id: str) -> str:
-    """Create an unguessable, single-use CSV download token."""
+    """Create an unguessable temporary CSV download token."""
     store = _token_store(hass)
     now = time.monotonic()
 
-    # Opportunistically remove expired tokens.
     for old_token, data in list(store.items()):
         if float(data.get("expires", 0)) <= now:
             store.pop(old_token, None)
@@ -54,24 +53,22 @@ def create_csv_export_token(hass: HomeAssistant, entry_id: str) -> str:
 class WagoCsvExportView(HomeAssistantView):
     """Download the current point table as a CSV attachment."""
 
-    url = f"/api/{DOMAIN}/export/{{token}}.csv"
+    # Deliberately outside /api/. A relative /api link shown by a Config Flow can
+    # be intercepted by Home Assistant's SPA router on a normal click/tap.
+    url = f"/wago_modbus/export/{{token}}.csv"
     name = f"api:{DOMAIN}:export_csv"
-
-    # A normal Home Assistant API view requires an Authorization header. A link
-    # clicked from a Config Flow does not send that header, so we use a random,
-    # short-lived, single-use token instead. The token grants access only to one
-    # CSV export and expires after five minutes.
     requires_auth = False
 
     async def get(self, request: web.Request, token: str) -> web.Response:
         """Generate and return one CSV export."""
         hass: HomeAssistant = request.app["hass"]
         store = _token_store(hass)
-        data = store.pop(token, None)
+        data = store.get(token)
         if data is None:
             raise web.HTTPNotFound()
 
         if float(data.get("expires", 0)) <= time.monotonic():
+            store.pop(token, None)
             raise web.HTTPGone(text="Ce lien d’export CSV a expiré.")
 
         entry_id = str(data.get("entry_id", ""))
