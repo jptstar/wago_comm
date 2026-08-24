@@ -14,7 +14,10 @@ La particularité de l'intégration est que les entités ne sont pas codées en 
 - ajout, modification, duplication et suppression depuis Home Assistant
 - import et export CSV depuis l'interface Home Assistant
 - regroupement des lectures par blocs Modbus
-- sous-appareils Home Assistant basés sur la colonne `section`
+- sections et sous-sections hiérarchiques (`Parent / Enfant`)
+- sélection d'une section existante ou création d'une nouvelle depuis l'éditeur
+- suppression automatique des sections et sous-sections devenues vides
+- formulaires dynamiques : seuls les paramètres utiles au type d'entité choisi sont affichés
 - `sensor`, `binary_sensor`, `switch`, `number`, `button`, `select`
 - `bool`, `uint16`, `int16`, `uint32`, `int32`, `float32`
 - facteur, offset, précision, min, max, pas et unité
@@ -44,6 +47,19 @@ Les valeurs correspondent à la table CODESYS fournie :
 
 Elles restent modifiables dans **Configurer → Mémoire Modbus**.
 
+## Éditeur de points
+
+L'ajout ou la modification d'un point se fait sous forme d'assistant :
+
+1. identité, type d'entité et section ;
+2. table Modbus et adresse ;
+3. format du registre si nécessaire ;
+4. paramètres spécifiques au type choisi.
+
+Par exemple, un `number` affiche facteur, offset, unité, minimum, maximum et pas, tandis qu'un `button` affiche uniquement les paramètres de commande et d'impulsion.
+
+Une nouvelle sous-section se crée en choisissant une section parente. Les sections sont dérivées des points : quand le dernier point d'une section est supprimé ou déplacé, l'appareil de section vide est nettoyé au rechargement.
+
 ## Import CSV
 
 Le fichier `examples/wago_points.csv` est prérempli avec les points explicitement présents dans les flows Node-RED transmis.
@@ -51,6 +67,8 @@ Le fichier `examples/wago_points.csv` est prérempli avec les points expliciteme
 Dans Home Assistant : **Configurer → Importer un CSV → choisir le fichier → Remplacer/Fusionner → vérifier → confirmer**.
 
 Le CSV est validé avant import : plages mémoire, types, écritures interdites, min/max/pas, facteur, bits, IDs, limite de 100 points, etc.
+
+Pour une hiérarchie, la colonne `section` peut contenir par exemple `Arrosage gazon / Terrasse`.
 
 Le menu **Exporter le CSV** écrit la table courante dans `/config/www/wago_exports/`, accessible via `/local/wago_exports/`.
 
@@ -66,4 +84,4 @@ Les flows fournis utilisent le **Coil 21 à la fois pour “Gazon pool house” 
 
 ## Version
 
-**0.1.0**
+**0.1.1**
