@@ -55,7 +55,9 @@ Installez ensuite **WAGO 750-8212 PFC200**, redémarrez Home Assistant et ajoute
 
 ### Versionnement HACS
 
-Les versions sont publiées sous forme de **GitHub Releases**. Un workflow GitHub crée automatiquement la release correspondant à la valeur `version` du `manifest.json` à chaque changement de version. HACS peut ainsi comparer correctement la version installée et la dernière version distante.
+Les versions sont publiées sous forme de **GitHub Releases**. Un workflow GitHub crée automatiquement la release correspondant à la valeur `version` du `manifest.json` à chaque changement de version. La branche `main` est masquée dans le sélecteur HACS afin que les installations suivent les releases publiées.
+
+Si le dépôt a été installé avant la mise en place des Releases et que HACS suit encore `main`, effectuez une migration unique : **HACS → WAGO 750-8212 PFC200 → menu ⋮ → Retélécharger → Besoin d'une autre version ? → sélectionner la dernière version `0.1.x`**. Les mises à jour suivantes seront ensuite détectées normalement.
 
 ## Mémoire Modbus par défaut
 
@@ -139,4 +141,4 @@ Les flows fournis utilisent le **Coil 21 à la fois pour “Gazon pool house” 
 
 ## Version
 
-**0.1.6**
+**0.1.7**
