@@ -1,14 +1,15 @@
-"""Binary sensor platform for configurable WAGO points."""
+"""Binary sensor platform for configurable WAGO points and diagnostics."""
 
 from __future__ import annotations
 
 from homeassistant.components.binary_sensor import BinarySensorDeviceClass, BinarySensorEntity
 from homeassistant.config_entries import ConfigEntry
+from homeassistant.const import EntityCategory
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddConfigEntryEntitiesCallback
 
 from .const import PLATFORM_BINARY_SENSOR
-from .entity import WagoPointEntity
+from .entity import WagoDiagnosticEntity, WagoPointEntity
 
 
 async def async_setup_entry(
@@ -22,9 +23,13 @@ async def async_setup_entry(
         for p in runtime.points
         if p.get("enabled", True) and p.get("platform") == PLATFORM_BINARY_SENSOR
     ]
-    async_add_entities(
+    entities: list[BinarySensorEntity] = [
+        WagoControllerOnline(runtime.coordinator, entry)
+    ]
+    entities.extend(
         WagoBinarySensor(runtime.coordinator, entry, point) for point in points
     )
+    async_add_entities(entities)
 
 
 class WagoBinarySensor(WagoPointEntity, BinarySensorEntity):
@@ -39,3 +44,23 @@ class WagoBinarySensor(WagoPointEntity, BinarySensorEntity):
     @property
     def is_on(self) -> bool:
         return bool(self.point_value)
+
+
+class WagoControllerOnline(WagoDiagnosticEntity, BinarySensorEntity):
+    """Connectivity state derived from the latest Modbus polling cycle."""
+
+    _attr_device_class = BinarySensorDeviceClass.CONNECTIVITY
+    _attr_entity_category = EntityCategory.DIAGNOSTIC
+    _attr_icon = "mdi:lan-connect"
+
+    def __init__(self, coordinator, entry) -> None:
+        super().__init__(
+            coordinator,
+            entry,
+            "controller_online",
+            "Automate en ligne",
+        )
+
+    @property
+    def is_on(self) -> bool:
+        return self.coordinator.controller_online
