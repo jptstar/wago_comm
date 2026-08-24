@@ -1,0 +1,38 @@
+enabled;id;section;name;platform;table;address;data_type;bit;scale;offset;precision;min;max;step;unit;device_class;state_class;read;write;inverted;read_after_write;byte_order;word_order;command_mode;pulse_ms;active_value;return_value;select_options;icon;notes
+oui;backwash_request;Backwash;Demande de backwash;switch;coil;0;bool;;1;0;;;;;;;;oui;oui;non;oui;big;big;normal;300;1;0;;mdi:filter-cog;
+oui;valve_garden_command;Arrivée d'eau;Vanne sortie jardin — commande;switch;coil;1;bool;;1;0;;;;;;;;oui;oui;non;oui;big;big;normal;300;1;0;;mdi:valve;
+oui;valve_sewer_command;Arrivée d'eau;Vanne égout — commande;switch;coil;2;bool;;1;0;;;;;;;;oui;oui;non;oui;big;big;normal;300;1;0;;mdi:valve;
+oui;valve_well_command;Arrivée d'eau;Vanne arrivée puits — commande;switch;coil;3;bool;;1;0;;;;;;;;oui;oui;non;oui;big;big;normal;300;1;0;;mdi:valve;
+oui;valve_bypass_command;Arrivée d'eau;Vanne bypass — commande;switch;coil;4;bool;;1;0;;;;;;;;oui;oui;non;oui;big;big;normal;300;1;0;;mdi:valve;
+oui;valve_city_water_command;Arrivée d'eau;Vanne eau de ville — commande;switch;coil;5;bool;;1;0;;;;;;;;oui;oui;non;oui;big;big;normal;300;1;0;;mdi:valve;
+oui;lawn_start;Arrosage gazon;Démarrer arrosage gazon;button;coil;16;bool;;1;0;;;;;;;;non;oui;non;oui;big;big;pulse;300;1;0;;mdi:play;
+oui;lawn_stop;Arrosage gazon;Arrêter arrosage gazon;button;coil;17;bool;;1;0;;;;;;;;non;oui;non;oui;big;big;pulse;300;1;0;;mdi:stop;
+oui;drip_start;Arrosage goutte-à-goutte;Démarrer goutte-à-goutte;button;coil;32;bool;;1;0;;;;;;;;non;oui;non;oui;big;big;pulse;300;1;0;;mdi:play;
+oui;drip_stop;Arrosage goutte-à-goutte;Arrêter goutte-à-goutte;button;coil;33;bool;;1;0;;;;;;;;non;oui;non;oui;big;big;pulse;300;1;0;;mdi:stop;
+oui;lawn_terrace_manual;Arrosage gazon;Gazon terrasse — manuel;switch;coil;18;bool;;1;0;;;;;;;;oui;oui;non;oui;big;big;normal;300;1;0;;mdi:sprinkler;
+oui;lawn_slope_manual;Arrosage gazon;Gazon butte — manuel;switch;coil;19;bool;;1;0;;;;;;;;oui;oui;non;oui;big;big;normal;300;1;0;;mdi:sprinkler;
+oui;lawn_pool_manual;Arrosage gazon;Gazon piscine — manuel;switch;coil;20;bool;;1;0;;;;;;;;oui;oui;non;oui;big;big;normal;300;1;0;;mdi:sprinkler;
+oui;lawn_poolhouse_manual;Arrosage gazon;Gazon pool house — manuel;switch;coil;21;bool;;1;0;;;;;;;;oui;oui;non;oui;big;big;normal;300;1;0;;mdi:sprinkler;Adresse 21 également présente dans le flow GG fourni — à vérifier dans CODESYS.
+oui;drip_hedge_path_manual;Arrosage goutte-à-goutte;Haies chemin — manuel;switch;coil;21;bool;;1;0;;;;;;;;oui;oui;non;oui;big;big;normal;300;1;0;;mdi:water-outline;Conflit avec Gazon pool house dans les flows Node-RED fournis — à vérifier.
+oui;valve_garden_state;Arrivée d'eau;Vanne sortie jardin;binary_sensor;discrete_input;50;bool;;1;0;;;;;;;;oui;non;non;oui;big;big;normal;300;1;0;;mdi:valve;
+oui;valve_sewer_state;Arrivée d'eau;Vanne égout;binary_sensor;discrete_input;51;bool;;1;0;;;;;;;;oui;non;non;oui;big;big;normal;300;1;0;;mdi:valve;
+oui;valve_well_state;Arrivée d'eau;Vanne arrivée puits;binary_sensor;discrete_input;52;bool;;1;0;;;;;;;;oui;non;non;oui;big;big;normal;300;1;0;;mdi:valve;
+oui;valve_bypass_state;Arrivée d'eau;Vanne bypass;binary_sensor;discrete_input;53;bool;;1;0;;;;;;;;oui;non;non;oui;big;big;normal;300;1;0;;mdi:valve;
+oui;valve_city_water_state;Arrivée d'eau;Vanne eau de ville;binary_sensor;discrete_input;54;bool;;1;0;;;;;;;;oui;non;non;oui;big;big;normal;300;1;0;;mdi:valve;
+oui;pool_fill_valve_state;Arrivée d'eau;Vanne remplissage piscine;binary_sensor;discrete_input;56;bool;;1;0;;;;;;;;oui;non;non;oui;big;big;normal;300;1;0;;mdi:pool;
+oui;filter_pressure_before;Filtration puits;Pression avant filtre;sensor;holding_register;60;uint16;;0.01;0;2;0;10;0.01;bar;pressure;measurement;oui;non;non;oui;big;big;normal;300;1;0;;mdi:gauge;
+oui;filter_pressure_after;Filtration puits;Pression après filtre;sensor;holding_register;61;uint16;;0.01;0;2;0;10;0.01;bar;pressure;measurement;oui;non;non;oui;big;big;normal;300;1;0;;mdi:gauge;
+oui;filter_pressure_delta;Filtration puits;Pression différentielle;sensor;holding_register;62;uint16;;0.01;0;2;0;10;0.01;bar;pressure;measurement;oui;non;non;oui;big;big;normal;300;1;0;;mdi:gauge;
+oui;filter_step;Filtration puits;Étape filtration;sensor;holding_register;63;uint16;;1;0;0;;;;;;;oui;non;non;oui;big;big;normal;300;1;0;;mdi:state-machine;
+oui;filter_pressure_delta_threshold;Filtration puits;Seuil pression différentielle;number;holding_register;64;uint16;;0.01;0;2;0;10;0.01;bar;;;oui;oui;non;oui;big;big;normal;300;1;0;;mdi:gauge;
+oui;city_water_volume;Arrivée d'eau;Compteur eau de ville;sensor;holding_register;66;uint16;;0.001;0;3;;;;m³;water;total_increasing;oui;non;non;oui;big;big;normal;300;1;0;;mdi:water;
+oui;city_water_flow;Arrivée d'eau;Débit eau de ville;sensor;holding_register;67;uint16;;1;0;;;;;L/min;volume_flow_rate;measurement;oui;non;non;oui;big;big;normal;300;1;0;;mdi:waves-arrow-right;
+oui;lawn_terrace_base_duration;Arrosage gazon;Durée de base gazon terrasse;number;holding_register;70;uint16;;1;0;0;0;65535;1;min;;;oui;oui;non;oui;big;big;normal;300;1;0;;mdi:timer-cog;
+oui;lawn_cycles;Arrosage gazon;Cycles;number;holding_register;75;uint16;;1;0;0;0;65535;1;;;;oui;oui;non;oui;big;big;normal;300;1;0;;mdi:repeat;
+oui;lawn_multiplier;Arrosage gazon;Multiplicateur;number;holding_register;76;uint16;;0.1;0;1;0;6553.5;0.1;;;;oui;oui;non;oui;big;big;normal;300;1;0;;mdi:multiplication;
+oui;lawn_active_circuit;Arrosage gazon;Circuit actif;sensor;holding_register;78;uint16;;1;0;0;;;;;;;oui;non;non;oui;big;big;normal;300;1;0;;mdi:sprinkler-variant;
+oui;lawn_remaining_time;Arrosage gazon;Temps restant;sensor;holding_register;80;uint16;;1;0;0;;;;min;;;oui;non;non;oui;big;big;normal;300;1;0;;mdi:timer-sand;
+oui;drip_cycles;Arrosage goutte-à-goutte;Cycles;number;holding_register;87;uint16;;1;0;0;0;65535;1;;;;oui;oui;non;oui;big;big;normal;300;1;0;;mdi:repeat;
+oui;drip_multiplier;Arrosage goutte-à-goutte;Multiplicateur;number;holding_register;88;uint16;;0.1;0;1;0;6553.5;0.1;;;;oui;oui;non;oui;big;big;normal;300;1;0;;mdi:multiplication;
+oui;drip_active_circuit;Arrosage goutte-à-goutte;Circuit actif;sensor;holding_register;90;uint16;;1;0;0;;;;;;;oui;non;non;oui;big;big;normal;300;1;0;;mdi:water-outline;
+oui;drip_remaining_time;Arrosage goutte-à-goutte;Temps restant;sensor;holding_register;92;uint16;;1;0;0;;;;min;;;oui;non;non;oui;big;big;normal;300;1;0;;mdi:timer-sand;
