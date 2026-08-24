@@ -27,6 +27,7 @@ from .const import (
 )
 from .coordinator import WagoCoordinator
 from .flow_helpers import memory_for_entry
+from .http import WagoCsvExportView
 from .sections import (
     section_identifier,
     section_leaf,
@@ -46,6 +47,8 @@ type WagoConfigEntry = ConfigEntry[WagoRuntimeData]
 
 
 async def async_setup(hass: HomeAssistant, config: dict) -> bool:
+    """Set up integration-wide HTTP resources."""
+    hass.http.register_view(WagoCsvExportView)
     return True
 
 
