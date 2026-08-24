@@ -24,6 +24,33 @@ from .sections import (
 )
 
 
+class WagoDiagnosticEntity(CoordinatorEntity[WagoCoordinator]):
+    """Base class for diagnostics attached to the main WAGO device."""
+
+    _attr_has_entity_name = True
+
+    def __init__(
+        self,
+        coordinator: WagoCoordinator,
+        entry: ConfigEntry,
+        diagnostic_id: str,
+        name: str,
+    ) -> None:
+        super().__init__(coordinator)
+        self.entry = entry
+        self._attr_unique_id = f"diag_{entry.entry_id}_{diagnostic_id}"
+        self._attr_name = name
+
+    @property
+    def device_info(self) -> DeviceInfo:
+        return DeviceInfo(
+            identifiers={(DOMAIN, self.entry.entry_id)},
+            name=self.entry.title,
+            manufacturer=MANUFACTURER,
+            model=MODEL,
+        )
+
+
 class WagoPointEntity(CoordinatorEntity[WagoCoordinator]):
     """Base class for a configurable WAGO point."""
 
