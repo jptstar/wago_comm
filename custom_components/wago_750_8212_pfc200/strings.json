@@ -81,25 +81,51 @@
       },
       "points": {
         "title": "Points Modbus",
-        "description": "Ajoutez, modifiez, dupliquez ou supprimez un point. Jusqu’à 100 points.",
+        "description": "Ajoutez, modifiez, dupliquez ou supprimez un point. Les sections et sous-sections vides sont supprimées automatiquement.",
         "data": {
           "action": "Action",
           "point_id": "Point"
         }
       },
       "point_form": {
-        "title": "Point Modbus",
-        "description": "Les champs non pertinents pour le type choisi sont ignorés.",
+        "title": "Point Modbus — identité",
+        "description": "Choisissez le type d’entité et une section existante. Sélectionnez « Nouvelle section / sous-section » pour en créer une.",
         "data": {
           "id": "ID stable",
           "name": "Nom",
-          "section": "Section / sous-appareil",
           "enabled": "Actif",
           "platform": "Type d’entité Home Assistant",
+          "section_choice": "Section / sous-section"
+        }
+      },
+      "new_section": {
+        "title": "Nouvelle section / sous-section",
+        "description": "Choisissez éventuellement une section parente puis saisissez le nouveau nom.",
+        "data": {
+          "parent_section": "Section parente",
+          "section_name": "Nom de la nouvelle section"
+        }
+      },
+      "point_modbus": {
+        "title": "Point Modbus — adresse",
+        "description": "Seules les tables compatibles avec le type d’entité choisi sont proposées.",
+        "data": {
           "table": "Table Modbus",
-          "address": "Adresse",
+          "address": "Adresse"
+        }
+      },
+      "point_register": {
+        "title": "Point Modbus — format registre",
+        "description": "Définissez le type de donnée. Le bit n’est proposé que pour les entités booléennes ou de commande compatibles.",
+        "data": {
           "data_type": "Type de donnée",
-          "bit": "Bit (optionnel)",
+          "bit": "Bit (optionnel)"
+        }
+      },
+      "point_details": {
+        "title": "Point Modbus — paramètres",
+        "description": "Seuls les paramètres utiles au type d’entité sont affichés. {details}",
+        "data": {
           "scale": "Facteur",
           "offset": "Offset",
           "precision": "Précision",
@@ -109,8 +135,6 @@
           "unit": "Unité",
           "device_class": "Device class",
           "state_class": "State class",
-          "read": "Lecture",
-          "write": "Écriture",
           "inverted": "Inversé",
           "read_after_write": "Relire après écriture",
           "byte_order": "Ordre des octets",
@@ -125,14 +149,14 @@
       },
       "delete_point": {
         "title": "Supprimer le point",
-        "description": "Cette opération supprime l’entité après rechargement de l’intégration.",
+        "description": "Cette opération supprime l’entité. Si sa section ou sous-section devient vide, elle sera aussi supprimée automatiquement.",
         "data": {
           "confirm": "Confirmer"
         }
       },
       "import_csv": {
         "title": "Importer un tableau CSV",
-        "description": "Le CSV est contrôlé avant import. Utilisez le modèle fourni dans le dépôt.\n{details}",
+        "description": "Le CSV est contrôlé avant import. Les sections hiérarchiques peuvent être écrites sous la forme « Parent / Enfant ».\n{details}",
         "data": {
           "file": "Fichier CSV",
           "mode": "Mode d’import"
@@ -156,6 +180,7 @@
     "error": {
       "memory_conflict": "Au moins un point existant se trouverait hors des nouvelles plages.",
       "point_required": "Sélectionnez un point pour cette action.",
+      "section_required": "Saisissez un nom de section.",
       "invalid_point": "Le point est invalide ou entre en conflit avec la configuration.",
       "too_many_points": "La limite de 100 points est atteinte.",
       "invalid_csv": "Le fichier CSV est invalide. {details}",
