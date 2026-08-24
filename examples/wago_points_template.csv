@@ -1,0 +1,2 @@
+enabled;id;section;name;platform;table;address;data_type;bit;scale;offset;precision;min;max;step;unit;device_class;state_class;read;write;inverted;read_after_write;byte_order;word_order;command_mode;pulse_ms;active_value;return_value;select_options;icon;notes
+oui;example_pressure;Filtration;Pression exemple;sensor;holding_register;60;uint16;;0.01;0;2;0;10;0.01;bar;pressure;measurement;oui;non;non;oui;big;big;normal;300;1;0;;mdi:gauge;
