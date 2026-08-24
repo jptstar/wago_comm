@@ -9,6 +9,7 @@ from homeassistant.const import CONF_HOST, CONF_PORT, CONF_TIMEOUT
 from homeassistant.core import HomeAssistant
 from homeassistant.exceptions import ConfigEntryNotReady
 from homeassistant.helpers import device_registry as dr
+from homeassistant.helpers import entity_registry as er
 
 from .api import WagoCommunicationError, WagoModbusClient
 from .config_flow import _memory_for_entry
@@ -23,9 +24,16 @@ from .const import (
     DOMAIN,
     MANUFACTURER,
     MODEL,
+    NAME,
     PLATFORMS,
 )
 from .coordinator import WagoCoordinator
+from .sections import (
+    section_identifier,
+    section_leaf,
+    section_parent,
+    section_paths_from_points,
+)
 from .storage import async_load_points
 
 
@@ -40,6 +48,54 @@ type WagoConfigEntry = ConfigEntry[WagoRuntimeData]
 
 async def async_setup(hass: HomeAssistant, config: dict) -> bool:
     return True
+
+
+def _cleanup_removed_points_and_sections(
+    hass: HomeAssistant, entry: WagoConfigEntry, points: list[dict]
+) -> None:
+    """Remove registry objects that no longer exist in the point table."""
+    valid_unique_ids = {
+        f"{entry.entry_id}_{point['id']}" for point in points if point.get("id")
+    }
+    entity_registry = er.async_get(hass)
+    prefix = f"{entry.entry_id}_"
+    for entity in list(er.async_entries_for_config_entry(entity_registry, entry.entry_id)):
+        if entity.unique_id.startswith(prefix) and entity.unique_id not in valid_unique_ids:
+            entity_registry.async_remove(entity.entity_id)
+
+    valid_section_identifiers = {
+        section_identifier(entry.entry_id, path)
+        for path in section_paths_from_points(points)
+    }
+    device_registry = dr.async_get(hass)
+    for device in list(dr.async_entries_for_config_entry(device_registry, entry.entry_id)):
+        section_ids = {
+            identifier
+            for domain, identifier in device.identifiers
+            if domain == DOMAIN and identifier.startswith(f"{entry.entry_id}:")
+        }
+        if section_ids and section_ids.isdisjoint(valid_section_identifiers):
+            device_registry.async_remove_device(device.id)
+
+
+def _ensure_section_devices(
+    hass: HomeAssistant, entry: WagoConfigEntry, points: list[dict]
+) -> None:
+    """Create used section and subsection devices with a proper hierarchy."""
+    registry = dr.async_get(hass)
+    for path in section_paths_from_points(points):
+        parent = section_parent(path)
+        via_identifier = (
+            section_identifier(entry.entry_id, parent) if parent else entry.entry_id
+        )
+        registry.async_get_or_create(
+            config_entry_id=entry.entry_id,
+            identifiers={(DOMAIN, section_identifier(entry.entry_id, path))},
+            manufacturer=MANUFACTURER,
+            model=f"{NAME} — groupe Modbus",
+            name=section_leaf(path),
+            via_device=(DOMAIN, via_identifier),
+        )
 
 
 async def async_setup_entry(hass: HomeAssistant, entry: WagoConfigEntry) -> bool:
@@ -94,6 +150,9 @@ async def async_setup_entry(hass: HomeAssistant, entry: WagoConfigEntry) -> bool
         name=entry.title,
     )
 
+    _cleanup_removed_points_and_sections(hass, entry, points)
+    _ensure_section_devices(hass, entry, points)
+
     await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
     return True
 
@@ -105,7 +164,5 @@ async def async_unload_entry(hass: HomeAssistant, entry: WagoConfigEntry) -> boo
     return unloaded
 
 
-async def _async_reload_entry(
-    hass: HomeAssistant, entry: WagoConfigEntry
-) -> None:
+async def _async_reload_entry(hass: HomeAssistant, entry: WagoConfigEntry) -> None:
     await hass.config_entries.async_reload(entry.entry_id)
