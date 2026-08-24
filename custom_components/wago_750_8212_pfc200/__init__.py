@@ -7,11 +7,10 @@ from dataclasses import dataclass
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import CONF_HOST, CONF_PORT, CONF_TIMEOUT
 from homeassistant.core import HomeAssistant
-from homeassistant.exceptions import ConfigEntryNotReady
 from homeassistant.helpers import device_registry as dr
 from homeassistant.helpers import entity_registry as er
 
-from .api import WagoCommunicationError, WagoModbusClient
+from .api import WagoModbusClient
 from .const import (
     CONF_RECONNECT_DELAY,
     CONF_SCAN_INTERVAL,
@@ -130,12 +129,11 @@ async def async_setup_entry(hass: HomeAssistant, entry: WagoConfigEntry) -> bool
             )
         ),
     )
-    try:
-        await api.async_connect()
-        await coordinator.async_config_entry_first_refresh()
-    except (WagoCommunicationError, OSError) as err:
-        await api.async_close()
-        raise ConfigEntryNotReady(str(err)) from err
+
+    # Do not block the whole config entry if the controller is temporarily offline
+    # during a Home Assistant restart. Point entities will become unavailable, while
+    # the diagnostic entities remain present and "Automate en ligne" reports OFF.
+    await coordinator.async_refresh()
 
     points = await async_load_points(hass, entry.entry_id)
     entry.runtime_data = WagoRuntimeData(coordinator=coordinator, points=points)
