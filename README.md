@@ -12,6 +12,8 @@ La particularité de l'intégration est que les entités ne sont pas codées en 
 - définition des quatre plages mémoire Modbus : Coils, Discrete Inputs, Holding Registers et Input Registers
 - jusqu'à **100 points configurables**
 - ajout, modification, duplication et suppression depuis Home Assistant
+- déplacement simultané de plusieurs points vers une même section ou sous-section
+- navigation **Retour** dans l'assistant de configuration des points
 - import et export CSV depuis l'interface Home Assistant
 - regroupement des lectures par blocs Modbus
 - sections et sous-sections hiérarchiques (`Parent / Enfant`)
@@ -56,9 +58,21 @@ L'ajout ou la modification d'un point se fait sous forme d'assistant :
 3. format du registre si nécessaire ;
 4. paramètres spécifiques au type choisi.
 
+Chaque étape propose désormais **Retour** pour revenir à l'étape précédente sans devoir quitter complètement la configuration.
+
 Par exemple, un `number` affiche facteur, offset, unité, minimum, maximum et pas, tandis qu'un `button` affiche uniquement les paramètres de commande et d'impulsion.
 
 Une nouvelle sous-section se crée en choisissant une section parente. Les sections sont dérivées des points : quand le dernier point d'une section est supprimé ou déplacé, l'appareil de section vide est nettoyé au rechargement.
+
+### Déplacer plusieurs points
+
+Dans **Configurer → Points Modbus → Déplacer plusieurs points**, sélectionnez plusieurs entités dans la liste puis choisissez :
+
+- une section ou sous-section existante ;
+- **WAGO principal** pour retirer leur section ;
+- **Nouvelle section / sous-section** pour créer une destination à la volée.
+
+La nouvelle section est appliquée à tous les points sélectionnés en une seule opération. Les anciennes sections devenues vides sont ensuite supprimées automatiquement.
 
 ## Import CSV
 
@@ -84,4 +98,4 @@ Les flows fournis utilisent le **Coil 21 à la fois pour “Gazon pool house” 
 
 ## Version
 
-**0.1.1**
+**0.1.2**
