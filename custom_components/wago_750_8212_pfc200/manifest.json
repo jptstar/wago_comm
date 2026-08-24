@@ -1,6 +1,6 @@
 {
   "domain": "wago_750_8212_pfc200",
-  "name": "WAGO 750-8212 PFC200",
+  "name": "WAGO 750-8212 PFC200 Modbus",
   "codeowners": ["@jptstar"],
   "config_flow": true,
   "dependencies": ["file_upload"],
@@ -9,5 +9,5 @@
   "iot_class": "local_polling",
   "issue_tracker": "https://github.com/jptstar/wago_comm/issues",
   "requirements": ["pymodbus==3.13.1"],
-  "version": "0.1.7"
+  "version": "0.1.8"
 }
