@@ -1,4 +1,4 @@
-# WAGO Modbus — Home Assistant
+# WAGO 750-8212 PFC200 Modbus — Home Assistant
 
 Intégration Home Assistant locale pour exposer un **WAGO 750-8212 PFC200** via **Modbus/TCP**.
 
@@ -50,7 +50,7 @@ Les diagnostics restent disponibles lorsque la communication tombe. `Automate en
 
 ## Installation HACS
 
-Ajoutez le dépôt GitHub comme dépôt personnalisé HACS de type **Intégration**.
+Ajoutez `https://github.com/jptstar/wago_modbus` comme dépôt personnalisé HACS de type **Intégration**.
 
 Installez ensuite **WAGO 750-8212 PFC200 Modbus**, redémarrez Home Assistant et ajoutez l'intégration depuis **Paramètres → Appareils et services → Ajouter une intégration**.
 
@@ -142,4 +142,4 @@ Les flows fournis utilisent le **Coil 21 à la fois pour “Gazon pool house” 
 
 ## Version
 
-**0.1.8**
+**0.1.9**
