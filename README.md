@@ -12,6 +12,9 @@ La particularité de l'intégration est que les entités ne sont pas codées en 
 - définition des quatre plages mémoire Modbus : Coils, Discrete Inputs, Holding Registers et Input Registers
 - jusqu'à **100 points configurables**
 - ajout, modification, duplication et suppression depuis Home Assistant
+- adresses Modbus proposées automatiquement depuis la plage configurée, avec indication **disponible / déjà utilisée**
+- saisie manuelle d'une adresse conservée tant qu'elle appartient à la plage configurée
+- listes d'unités, `device_class` et `state_class` avec saisie personnalisée possible
 - déplacement simultané de plusieurs points vers une même section ou sous-section
 - gestion complète des sections : renommer, déplacer ou fusionner une section et toute sa hiérarchie
 - détection des doublons de sections dus à la casse, aux espaces, à la ponctuation ou à un nom très proche
@@ -56,13 +59,18 @@ Elles restent modifiables dans **Configurer → Mémoire Modbus**.
 L'ajout ou la modification d'un point se fait sous forme d'assistant :
 
 1. identité, type d'entité et section ;
-2. table Modbus et adresse ;
-3. format du registre si nécessaire ;
-4. paramètres spécifiques au type choisi.
+2. table Modbus ;
+3. adresse Modbus ;
+4. format du registre si nécessaire ;
+5. paramètres spécifiques au type choisi.
 
-Chaque étape propose désormais **Retour** pour revenir à l'étape précédente sans devoir quitter complètement la configuration.
+À l'étape **Adresse Modbus**, l'intégration construit la liste à partir de la plage mémoire configurée. Chaque adresse est marquée **disponible**, **adresse actuelle** ou **déjà utilisée** avec le nom des points concernés. La saisie manuelle reste possible.
 
-Par exemple, un `number` affiche facteur, offset, unité, minimum, maximum et pas, tandis qu'un `button` affiche uniquement les paramètres de commande et d'impulsion.
+Pour les capteurs et nombres, les unités courantes sont proposées dans une liste déroulante avec saisie libre. Les classes d'appareil sont proposées depuis les valeurs connues par Home Assistant ; les capteurs proposent aussi les `state_class` disponibles. Une valeur personnalisée peut toujours être saisie.
+
+Chaque étape propose **Retour** pour revenir à l'étape précédente sans devoir quitter complètement la configuration.
+
+Par exemple, un `number` affiche facteur, offset, unité, minimum, maximum, pas et classe d'appareil, tandis qu'un `button` affiche uniquement les paramètres de commande et d'impulsion.
 
 Une nouvelle sous-section se crée en choisissant une section parente. Les sections sont dérivées des points : quand le dernier point d'une section est supprimé ou déplacé, l'appareil de section vide est nettoyé au rechargement.
 
@@ -115,4 +123,4 @@ Les flows fournis utilisent le **Coil 21 à la fois pour “Gazon pool house” 
 
 ## Version
 
-**0.1.3**
+**0.1.4**
