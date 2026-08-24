@@ -34,6 +34,18 @@ La particularité de l'intégration est que les entités ne sont pas codées en 
 - commandes impulsionnelles
 - relecture automatique après écriture
 - identifiant stable par point
+- diagnostics de communication sur le WAGO principal
+
+## Diagnostics du WAGO principal
+
+Quatre entités de diagnostic sont créées directement sur le contrôleur WAGO :
+
+- **Dernière communication réussie** — date/heure de la dernière lecture Modbus complète réussie
+- **Durée de communication** — durée du dernier cycle de communication, en millisecondes
+- **Échecs de communication consécutifs** — compteur remis à zéro après une lecture réussie
+- **Automate en ligne** — capteur binaire de connectivité basé sur le résultat du dernier cycle Modbus
+
+Les diagnostics restent disponibles lorsque la communication tombe. `Automate en ligne` passe donc à **OFF** au lieu de devenir lui-même indisponible. L'intégration se charge également lors d'un redémarrage de Home Assistant si le WAGO est momentanément hors ligne ; les points métier sont alors indisponibles, mais les diagnostics restent visibles jusqu'au retour de la communication.
 
 ## Installation HACS
 
@@ -123,4 +135,4 @@ Les flows fournis utilisent le **Coil 21 à la fois pour “Gazon pool house” 
 
 ## Version
 
-**0.1.4**
+**0.1.5**
