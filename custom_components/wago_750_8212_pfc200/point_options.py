@@ -34,7 +34,12 @@ from .const import (
 from .csv_io import validate_points
 from .flow_helpers import box, memory_for_entry, select
 from .point import register_count, slugify
-from .sections import normalize_section_path, section_paths_from_points
+from .sections import (
+    equivalent_section_path,
+    normalize_section_path,
+    section_paths_from_points,
+    similar_section_path,
+)
 from .storage import async_load_points, async_save_points
 
 SECTION_ROOT = "__root__"
@@ -207,11 +212,22 @@ class WagoPointOptionsMixin:
                     errors={"base": "section_required"},
                 )
             parent = str(user_input["parent_section"])
-            self._point_draft["section"] = (
+            candidate = (
                 name
                 if parent == SECTION_ROOT
                 else normalize_section_path(f"{parent} / {name}")
             )
+            equivalent = equivalent_section_path(candidate, paths)
+            if equivalent is not None:
+                self._point_draft["section"] = equivalent
+                return await self.async_step_point_modbus()
+            if similar_section_path(candidate, paths) is not None:
+                return self.async_show_form(
+                    step_id="new_section",
+                    data_schema=schema,
+                    errors={"base": "similar_section"},
+                )
+            self._point_draft["section"] = candidate
             return await self.async_step_point_modbus()
         return self.async_show_form(step_id="new_section", data_schema=schema)
 
