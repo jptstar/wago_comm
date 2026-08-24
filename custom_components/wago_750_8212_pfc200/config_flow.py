@@ -21,7 +21,7 @@ from .const import (
     DOMAIN,
 )
 from .flow_helpers import connection_schema, effective, memory_for_entry, memory_schema, test_connection
-from .options_flow_v3 import WagoOptionsFlowV3
+from .options_flow_v4 import WagoOptionsFlowV4
 
 # Kept as a public helper for the integration runtime.
 _memory_for_entry = memory_for_entry
@@ -107,4 +107,4 @@ class WagoConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
     @staticmethod
     @callback
     def async_get_options_flow(config_entry: ConfigEntry):
-        return WagoOptionsFlowV3(config_entry)
+        return WagoOptionsFlowV4(config_entry)
