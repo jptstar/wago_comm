@@ -10,7 +10,18 @@ from homeassistant.helpers.update_coordinator import CoordinatorEntity
 
 from .const import DOMAIN, MANUFACTURER, MODEL, NAME, TABLE_COIL, TABLE_HOLDING
 from .coordinator import WagoCoordinator
-from .point import decoded_point_value, encode_engineering_value, encode_raw_value, raw_point_value, slugify
+from .point import (
+    decoded_point_value,
+    encode_engineering_value,
+    encode_raw_value,
+    raw_point_value,
+)
+from .sections import (
+    normalize_section_path,
+    section_identifier,
+    section_leaf,
+    section_parent,
+)
 
 
 class WagoPointEntity(CoordinatorEntity[WagoCoordinator]):
@@ -34,7 +45,7 @@ class WagoPointEntity(CoordinatorEntity[WagoCoordinator]):
 
     @property
     def device_info(self) -> DeviceInfo:
-        section = str(self.point.get("section") or "").strip()
+        section = normalize_section_path(self.point.get("section", ""))
         if not section:
             return DeviceInfo(
                 identifiers={(DOMAIN, self.entry.entry_id)},
@@ -42,13 +53,18 @@ class WagoPointEntity(CoordinatorEntity[WagoCoordinator]):
                 manufacturer=MANUFACTURER,
                 model=MODEL,
             )
-        section_id = slugify(section) or "points"
+        parent = section_parent(section)
+        via_identifier = (
+            section_identifier(self.entry.entry_id, parent)
+            if parent
+            else self.entry.entry_id
+        )
         return DeviceInfo(
-            identifiers={(DOMAIN, f"{self.entry.entry_id}:{section_id}")},
-            name=section,
+            identifiers={(DOMAIN, section_identifier(self.entry.entry_id, section))},
+            name=section_leaf(section),
             manufacturer=MANUFACTURER,
             model=f"{NAME} — groupe Modbus",
-            via_device=(DOMAIN, self.entry.entry_id),
+            via_device=(DOMAIN, via_identifier),
         )
 
     @property
@@ -67,7 +83,11 @@ class WagoPointEntity(CoordinatorEntity[WagoCoordinator]):
         elif table == TABLE_HOLDING:
             bit = self.point.get("bit")
             if bit is not None:
-                current = int((self.coordinator.data or {}).get(TABLE_HOLDING, {}).get(address, 0))
+                current = int(
+                    (self.coordinator.data or {})
+                    .get(TABLE_HOLDING, {})
+                    .get(address, 0)
+                )
                 mask = 1 << int(bit)
                 raw_bool = bool(value)
                 if self.point.get("inverted", False):
@@ -94,7 +114,11 @@ class WagoPointEntity(CoordinatorEntity[WagoCoordinator]):
         elif table == TABLE_HOLDING:
             bit = self.point.get("bit")
             if bit is not None:
-                current = int((self.coordinator.data or {}).get(TABLE_HOLDING, {}).get(address, 0))
+                current = int(
+                    (self.coordinator.data or {})
+                    .get(TABLE_HOLDING, {})
+                    .get(address, 0)
+                )
                 mask = 1 << int(bit)
                 raw_bool = bool(value)
                 if self.point.get("inverted", False):
