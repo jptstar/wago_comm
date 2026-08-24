@@ -52,6 +52,7 @@
           "communication": "Communication",
           "memory": "Mémoire Modbus",
           "points": "Points Modbus",
+          "sections": "Gérer les sections",
           "import_csv": "Importer un CSV",
           "export_csv": "Exporter le CSV"
         }
@@ -89,6 +90,31 @@
           "point_id": "Point"
         }
       },
+      "sections": {
+        "title": "Gérer les sections",
+        "description": "Sélectionnez une section ou sous-section. Le nombre indiqué inclut ses sous-sections. Vous pourrez ensuite la renommer, la déplacer ou la fusionner avec une autre.",
+        "data": {
+          "source_section": "Section / sous-section",
+          "back": "⬅ Retour au menu"
+        }
+      },
+      "section_destination": {
+        "title": "Déplacer ou fusionner la section",
+        "description": "Choisissez une section existante pour fusionner, le WAGO principal pour retirer ce niveau, ou « Renommer / nouvelle destination ».",
+        "data": {
+          "section_choice": "Destination",
+          "back": "⬅ Retour"
+        }
+      },
+      "section_new_destination": {
+        "title": "Renommer / déplacer la section",
+        "description": "Le changement est appliqué à tous les points de cette section et de ses sous-sections.",
+        "data": {
+          "parent_section": "Nouvelle section parente",
+          "section_name": "Nouveau nom",
+          "back": "⬅ Retour"
+        }
+      },
       "point_form": {
         "title": "Point Modbus — identité",
         "description": "Choisissez le type d’entité et une section existante. Sélectionnez « Nouvelle section / sous-section » pour en créer une.",
@@ -103,7 +129,7 @@
       },
       "new_section": {
         "title": "Nouvelle section / sous-section",
-        "description": "Choisissez éventuellement une section parente puis saisissez le nouveau nom.",
+        "description": "Choisissez éventuellement une section parente puis saisissez le nouveau nom. Les doublons de casse, ponctuation ou noms très proches sont détectés.",
         "data": {
           "parent_section": "Section parente",
           "section_name": "Nom de la nouvelle section",
@@ -218,6 +244,8 @@
       "point_required": "Sélectionnez un point pour cette action.",
       "points_required": "Sélectionnez au moins un point.",
       "section_required": "Saisissez un nom de section.",
+      "similar_section": "Une section au nom très proche existe déjà. Revenez à la liste pour l’utiliser ou choisissez un nom réellement différent.",
+      "no_sections": "Aucune section n’est actuellement utilisée.",
       "invalid_point": "Le point est invalide ou entre en conflit avec la configuration.",
       "too_many_points": "La limite de 100 points est atteinte.",
       "invalid_csv": "Le fichier CSV est invalide. {details}",
