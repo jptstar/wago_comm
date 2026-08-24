@@ -42,6 +42,11 @@ class WagoDiagnosticEntity(CoordinatorEntity[WagoCoordinator]):
         self._attr_name = name
 
     @property
+    def available(self) -> bool:
+        """Diagnostics must stay visible even when the latest poll failed."""
+        return True
+
+    @property
     def device_info(self) -> DeviceInfo:
         return DeviceInfo(
             identifiers={(DOMAIN, self.entry.entry_id)},
