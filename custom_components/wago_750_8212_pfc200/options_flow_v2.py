@@ -1,4 +1,4 @@
-"""Enhanced options-flow navigation for WAGO 750-8212 PFC200."""
+"""Enhanced options-flow navigation for WAGO 750-8212 PFC200 Modbus."""
 
 from __future__ import annotations
 
@@ -22,16 +22,14 @@ from .point_options import SECTION_NEW, SECTION_ROOT
 from .sections import (
     equivalent_section_path,
     normalize_section_path,
-    replace_section_prefix,
     section_paths_from_points,
-    section_point_count,
     similar_section_path,
 )
 from .storage import async_load_points, async_save_points
 
 
 class WagoOptionsFlowV2(BaseWagoOptionsFlow):
-    """Add explicit back navigation, bulk moves and section management."""
+    """Add explicit back navigation and multi-point section moves."""
 
     def _form_with_back(self, result: ConfigFlowResult) -> ConfigFlowResult:
         """Add an explicit Back checkbox to a point-wizard form."""
@@ -57,16 +55,18 @@ class WagoOptionsFlowV2(BaseWagoOptionsFlow):
         )
 
     async def async_step_points(self, user_input=None) -> ConfigFlowResult:
-        """Handle standard point actions plus bulk move and return."""
+        """Handle standard point actions plus multi-point section move."""
         if user_input is not None and user_input.get("action") == "back":
             return await self.async_step_init()
         if user_input is not None and user_input.get("action") == "bulk_move":
-            self._bulk_point_ids: list[str] = []
-            return await self.async_step_bulk_move_select()
+            self._bulk_point_ids = []
+            self._bulk_source_section = None
+            self._bulk_return_step = "points"
+            return await self.async_step_bulk_move_source()
         return await super().async_step_points(user_input)
 
     def _points_schema(self, points: list[dict[str, Any]]) -> vol.Schema:
-        """Expose bulk move and Return in the point action list."""
+        """Expose multi-point move and Return in the point action list."""
         point_options = [
             {
                 "value": point["id"],
@@ -84,7 +84,7 @@ class WagoOptionsFlowV2(BaseWagoOptionsFlow):
                     "edit": "Modifier",
                     "duplicate": "Dupliquer",
                     "delete": "Supprimer",
-                    "bulk_move": "Déplacer plusieurs points",
+                    "bulk_move": "Déplacer plusieurs entités vers une autre section",
                     "back": "⬅ Retour au menu",
                 }
             )
@@ -147,17 +147,101 @@ class WagoOptionsFlowV2(BaseWagoOptionsFlow):
             return await self.async_step_points()
         return self._form_with_back(await super().async_step_delete_point(user_input))
 
-    async def async_step_bulk_move_select(self, user_input=None) -> ConfigFlowResult:
-        """Select several points to move together."""
+    async def async_step_sections(self, user_input=None) -> ConfigFlowResult:
+        """Entry point for moving selected entities from one section to another."""
+        if not hasattr(self, "_bulk_return_step") or user_input is None:
+            self._bulk_return_step = "init"
+            self._bulk_point_ids = []
+            self._bulk_source_section = None
+        return await self.async_step_bulk_move_source(user_input)
+
+    async def _return_from_bulk_move(self) -> ConfigFlowResult:
+        """Return to the menu that started the bulk move."""
+        if getattr(self, "_bulk_return_step", "points") == "init":
+            return await self.async_step_init()
+        return await self.async_step_points()
+
+    async def async_step_bulk_move_source(self, user_input=None) -> ConfigFlowResult:
+        """Choose the exact source section/subsection before selecting entities."""
         points = await async_load_points(self.hass, self._entry.entry_id)
+        paths = section_paths_from_points(points)
+
+        source_options: list[dict[str, str]] = []
+        root_count = sum(
+            1 for point in points if not normalize_section_path(point.get("section", ""))
+        )
+        if root_count:
+            source_options.append(
+                {
+                    "value": SECTION_ROOT,
+                    "label": f"WAGO principal ({root_count} entité(s))",
+                }
+            )
+
+        for path in paths:
+            count = sum(
+                1
+                for point in points
+                if normalize_section_path(point.get("section", "")) == path
+            )
+            if count:
+                source_options.append(
+                    {"value": path, "label": f"{path} ({count} entité(s))"}
+                )
+
+        if not source_options:
+            return self.async_show_form(
+                step_id="bulk_move_source",
+                data_schema=vol.Schema({vol.Optional("back", default=False): bool}),
+                errors={"base": "no_points"},
+            )
+
+        default_source = getattr(self, "_bulk_source_section", None)
+        if default_source is None or not any(
+            item["value"] == default_source for item in source_options
+        ):
+            default_source = source_options[0]["value"]
+
+        schema = vol.Schema(
+            {
+                vol.Required("source_section", default=default_source): SelectSelector(
+                    SelectSelectorConfig(
+                        options=source_options,
+                        mode=SelectSelectorMode.DROPDOWN,
+                    )
+                ),
+                vol.Optional("back", default=False): bool,
+            }
+        )
+
+        if user_input is not None:
+            if user_input.get("back"):
+                return await self._return_from_bulk_move()
+            self._bulk_source_section = str(user_input["source_section"])
+            self._bulk_point_ids = []
+            return await self.async_step_bulk_move_select()
+
+        return self.async_show_form(step_id="bulk_move_source", data_schema=schema)
+
+    async def async_step_bulk_move_select(self, user_input=None) -> ConfigFlowResult:
+        """Select several entities from the chosen source section."""
+        points = await async_load_points(self.hass, self._entry.entry_id)
+        source = getattr(self, "_bulk_source_section", SECTION_ROOT)
+        source_path = "" if source == SECTION_ROOT else normalize_section_path(source)
+        source_points = [
+            point
+            for point in points
+            if normalize_section_path(point.get("section", "")) == source_path
+        ]
         options = [
             {
                 "value": point["id"],
                 "label": (
-                    f"{point.get('section', '')} — {point.get('name', point['id'])}"
-                ).lstrip(" —"),
+                    f"{point.get('name', point['id'])} "
+                    f"[{point.get('table')} {point.get('address')}]"
+                ),
             }
-            for point in points
+            for point in source_points
         ]
         schema = vol.Schema(
             {
@@ -173,7 +257,7 @@ class WagoOptionsFlowV2(BaseWagoOptionsFlow):
         )
         if user_input is not None:
             if user_input.get("back"):
-                return await self.async_step_points()
+                return await self.async_step_bulk_move_source()
             selected = [str(item) for item in user_input.get("point_ids", [])]
             if not selected:
                 return self.async_show_form(
@@ -191,10 +275,31 @@ class WagoOptionsFlowV2(BaseWagoOptionsFlow):
     async def async_step_bulk_move_section(self, user_input=None) -> ConfigFlowResult:
         """Choose the destination section/subsection."""
         points = await async_load_points(self.hass, self._entry.entry_id)
+        source = getattr(self, "_bulk_source_section", SECTION_ROOT)
+        source_path = "" if source == SECTION_ROOT else normalize_section_path(source)
+        paths = section_paths_from_points(points)
+
+        options: list[dict[str, str]] = []
+        if source_path:
+            options.append(
+                {"value": SECTION_ROOT, "label": "WAGO principal (aucune section)"}
+            )
+        options.extend(
+            {"value": path, "label": path}
+            for path in paths
+            if path != source_path
+        )
+        options.append(
+            {"value": SECTION_NEW, "label": "➕ Nouvelle section / sous-section"}
+        )
+
         schema = vol.Schema(
             {
-                vol.Required("section_choice", default=SECTION_ROOT): self._section_selector(
-                    points, ""
+                vol.Required("section_choice", default=options[0]["value"]): SelectSelector(
+                    SelectSelectorConfig(
+                        options=options,
+                        mode=SelectSelectorMode.DROPDOWN,
+                    )
                 ),
                 vol.Optional("back", default=False): bool,
             }
@@ -257,162 +362,20 @@ class WagoOptionsFlowV2(BaseWagoOptionsFlow):
         )
 
     async def _apply_bulk_section(self, destination: str) -> ConfigFlowResult:
-        """Apply a section path to all selected point IDs."""
+        """Move only the selected entity IDs to the destination section."""
         points = await async_load_points(self.hass, self._entry.entry_id)
         selected = set(getattr(self, "_bulk_point_ids", []))
+        source = getattr(self, "_bulk_source_section", SECTION_ROOT)
+        source_path = "" if source == SECTION_ROOT else normalize_section_path(source)
         changed = 0
         for point in points:
-            if point.get("id") in selected:
-                point["section"] = normalize_section_path(destination)
-                changed += 1
+            if point.get("id") not in selected:
+                continue
+            if normalize_section_path(point.get("section", "")) != source_path:
+                continue
+            point["section"] = normalize_section_path(destination)
+            changed += 1
         if not changed:
             return await self.async_step_bulk_move_select()
-        await async_save_points(self.hass, self._entry.entry_id, points)
-        return self._finish_points_change()
-
-    async def async_step_sections(self, user_input=None) -> ConfigFlowResult:
-        """Select a section or subsection to rename, move or merge."""
-        points = await async_load_points(self.hass, self._entry.entry_id)
-        paths = section_paths_from_points(points)
-        if not paths:
-            return self.async_show_form(
-                step_id="sections",
-                data_schema=vol.Schema({vol.Optional("back", default=False): bool}),
-                errors={"base": "no_sections"},
-            )
-        options = [
-            {
-                "value": path,
-                "label": f"{path} ({section_point_count(points, path)} point(s))",
-            }
-            for path in paths
-        ]
-        schema = vol.Schema(
-            {
-                vol.Required("source_section"): SelectSelector(
-                    SelectSelectorConfig(
-                        options=options,
-                        mode=SelectSelectorMode.DROPDOWN,
-                    )
-                ),
-                vol.Optional("back", default=False): bool,
-            }
-        )
-        if user_input is not None:
-            if user_input.get("back"):
-                return await self.async_step_init()
-            self._section_source = normalize_section_path(user_input["source_section"])
-            return await self.async_step_section_destination()
-        return self.async_show_form(step_id="sections", data_schema=schema)
-
-    async def async_step_section_destination(self, user_input=None) -> ConfigFlowResult:
-        """Choose where an entire section tree should be moved or merged."""
-        points = await async_load_points(self.hass, self._entry.entry_id)
-        paths = section_paths_from_points(points)
-        source = normalize_section_path(getattr(self, "_section_source", ""))
-        forbidden_prefix = f"{source} /"
-        available = [
-            path
-            for path in paths
-            if path != source and not path.startswith(forbidden_prefix)
-        ]
-        options = [
-            {"value": SECTION_ROOT, "label": "WAGO principal (aucune section)"},
-            *[{"value": path, "label": f"Fusionner avec : {path}"} for path in available],
-            {"value": SECTION_NEW, "label": "✏️ Renommer / nouvelle destination"},
-        ]
-        schema = vol.Schema(
-            {
-                vol.Required("section_choice", default=SECTION_NEW): SelectSelector(
-                    SelectSelectorConfig(
-                        options=options,
-                        mode=SelectSelectorMode.DROPDOWN,
-                    )
-                ),
-                vol.Optional("back", default=False): bool,
-            }
-        )
-        if user_input is not None:
-            if user_input.get("back"):
-                return await self.async_step_sections()
-            choice = str(user_input["section_choice"])
-            if choice == SECTION_NEW:
-                return await self.async_step_section_new_destination()
-            destination = "" if choice == SECTION_ROOT else normalize_section_path(choice)
-            return await self._apply_section_tree_move(source, destination)
-        return self.async_show_form(
-            step_id="section_destination",
-            data_schema=schema,
-        )
-
-    async def async_step_section_new_destination(self, user_input=None) -> ConfigFlowResult:
-        """Rename a section tree or move it below another parent."""
-        points = await async_load_points(self.hass, self._entry.entry_id)
-        paths = section_paths_from_points(points)
-        source = normalize_section_path(getattr(self, "_section_source", ""))
-        forbidden_prefix = f"{source} /"
-        parents = [
-            path
-            for path in paths
-            if path != source and not path.startswith(forbidden_prefix)
-        ]
-        parent_options = {SECTION_ROOT: "Aucune — section racine"}
-        parent_options.update({path: path for path in parents})
-        default_name = source.rsplit(" / ", 1)[-1] if source else ""
-        schema = vol.Schema(
-            {
-                vol.Required("parent_section", default=SECTION_ROOT): select(parent_options),
-                vol.Required("section_name", default=default_name): TextSelector(
-                    TextSelectorConfig()
-                ),
-                vol.Optional("back", default=False): bool,
-            }
-        )
-        if user_input is not None:
-            if user_input.get("back"):
-                return await self.async_step_section_destination()
-            name = normalize_section_path(user_input["section_name"])
-            if not name:
-                return self.async_show_form(
-                    step_id="section_new_destination",
-                    data_schema=schema,
-                    errors={"base": "section_required"},
-                )
-            parent = str(user_input["parent_section"])
-            candidate = (
-                name
-                if parent == SECTION_ROOT
-                else normalize_section_path(f"{parent} / {name}")
-            )
-            comparable_paths = [path for path in paths if path != source]
-            equivalent = equivalent_section_path(candidate, comparable_paths)
-            if equivalent is not None:
-                return await self._apply_section_tree_move(source, equivalent)
-            if similar_section_path(candidate, comparable_paths) is not None:
-                return self.async_show_form(
-                    step_id="section_new_destination",
-                    data_schema=schema,
-                    errors={"base": "similar_section"},
-                )
-            return await self._apply_section_tree_move(source, candidate)
-        return self.async_show_form(
-            step_id="section_new_destination",
-            data_schema=schema,
-        )
-
-    async def _apply_section_tree_move(
-        self, source: str, destination: str
-    ) -> ConfigFlowResult:
-        """Rename/move a section and all of its child subsections in one operation."""
-        points = await async_load_points(self.hass, self._entry.entry_id)
-        changed = 0
-        for point in points:
-            current = normalize_section_path(point.get("section", ""))
-            updated = replace_section_prefix(current, source, destination)
-            if updated != current:
-                point["section"] = updated
-                changed += 1
-        if not changed:
-            return await self.async_step_sections()
         await async_save_points(self.hass, self._entry.entry_id, points)
         return self._finish_points_change()
