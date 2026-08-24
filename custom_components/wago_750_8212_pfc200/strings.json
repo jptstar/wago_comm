@@ -59,6 +59,7 @@
       },
       "communication": {
         "title": "Communication",
+        "description": "Paramètres de communication Modbus/TCP.",
         "data": {
           "unit_id": "Unit ID",
           "timeout": "Timeout (s)",
@@ -69,7 +70,7 @@
       },
       "memory": {
         "title": "Mémoire Modbus",
-        "description": "Les points existants doivent rester dans les nouvelles plages.",
+        "description": "Définissez les plages réellement exposées par le serveur Modbus du WAGO. Les points existants doivent rester dans ces plages.",
         "data": {
           "coil_start": "Coils — adresse de départ",
           "coil_size": "Coils — taille",
@@ -117,7 +118,7 @@
       },
       "point_form": {
         "title": "Point Modbus — identité",
-        "description": "Choisissez le type d’entité et une section existante. Sélectionnez « Nouvelle section / sous-section » pour en créer une.",
+        "description": "Choisissez le nom, le type d’entité et sa section. Vous pouvez sélectionner une section existante ou en créer une nouvelle.",
         "data": {
           "id": "ID stable",
           "name": "Nom",
@@ -129,7 +130,7 @@
       },
       "new_section": {
         "title": "Nouvelle section / sous-section",
-        "description": "Choisissez éventuellement une section parente puis saisissez le nouveau nom. Les doublons de casse, ponctuation ou noms très proches sont détectés.",
+        "description": "Choisissez éventuellement une section parente puis saisissez le nouveau nom. Les doublons et noms très proches sont détectés.",
         "data": {
           "parent_section": "Section parente",
           "section_name": "Nom de la nouvelle section",
@@ -137,17 +138,24 @@
         }
       },
       "point_modbus": {
-        "title": "Point Modbus — adresse",
-        "description": "Seules les tables compatibles avec le type d’entité choisi sont proposées.",
+        "title": "Point Modbus — table",
+        "description": "Choisissez la table Modbus. Les tables incompatibles avec le type d’entité ne sont pas proposées.",
         "data": {
           "table": "Table Modbus",
-          "address": "Adresse",
+          "back": "⬅ Retour"
+        }
+      },
+      "point_address": {
+        "title": "Point Modbus — adresse",
+        "description": "Les adresses de la plage configurée sont proposées et indiquées comme disponibles ou déjà utilisées. Une adresse peut aussi être saisie manuellement si elle appartient à la plage.",
+        "data": {
+          "address": "Adresse Modbus",
           "back": "⬅ Retour"
         }
       },
       "point_register": {
-        "title": "Point Modbus — format registre",
-        "description": "Définissez le type de donnée. Le bit n’est proposé que pour les entités booléennes ou de commande compatibles.",
+        "title": "Point Modbus — format du registre",
+        "description": "Définissez le type de donnée. Le numéro de bit n’est proposé que pour les entités compatibles.",
         "data": {
           "data_type": "Type de donnée",
           "bit": "Bit (optionnel)",
@@ -156,41 +164,41 @@
       },
       "point_details": {
         "title": "Point Modbus — paramètres",
-        "description": "Seuls les paramètres utiles au type d’entité sont affichés. {details}",
+        "description": "Seuls les paramètres utiles au type d’entité sélectionné sont affichés.",
         "data": {
           "scale": "Facteur",
-          "offset": "Offset",
-          "precision": "Précision",
+          "offset": "Décalage (offset)",
+          "precision": "Précision d’affichage",
           "min": "Minimum",
           "max": "Maximum",
           "step": "Pas",
           "unit": "Unité",
-          "device_class": "Device class",
-          "state_class": "State class",
+          "device_class": "Classe d’appareil Home Assistant",
+          "state_class": "Classe d’état Home Assistant",
           "inverted": "Inversé",
           "read_after_write": "Relire après écriture",
           "byte_order": "Ordre des octets",
           "word_order": "Ordre des mots",
           "command_mode": "Mode de commande",
-          "pulse_ms": "Durée impulsion (ms)",
+          "pulse_ms": "Durée de l’impulsion (ms)",
           "active_value": "Valeur active",
           "return_value": "Valeur de retour",
-          "select_options": "Valeurs Select (0=Arrêt|1=Marche)",
+          "select_options": "Valeurs de la liste (0=Arrêt|1=Marche)",
           "icon": "Icône MDI",
           "back": "⬅ Retour"
         }
       },
       "delete_point": {
         "title": "Supprimer le point",
-        "description": "Cette opération supprime l’entité. Si sa section ou sous-section devient vide, elle sera aussi supprimée automatiquement.",
+        "description": "Cette opération supprime l’entité. Si sa section ou sous-section devient vide, elle sera également supprimée.",
         "data": {
-          "confirm": "Confirmer",
+          "confirm": "Confirmer la suppression",
           "back": "⬅ Retour"
         }
       },
       "bulk_move_select": {
         "title": "Déplacer plusieurs points",
-        "description": "Sélectionnez toutes les entités auxquelles vous voulez appliquer la même section ou sous-section.",
+        "description": "Sélectionnez les entités auxquelles appliquer la même section ou sous-section.",
         "data": {
           "point_ids": "Points à déplacer",
           "back": "⬅ Retour"
@@ -198,15 +206,15 @@
       },
       "bulk_move_section": {
         "title": "Destination des points",
-        "description": "Choisissez une section/sous-section existante, le WAGO principal, ou créez une nouvelle destination.",
+        "description": "Choisissez une section ou sous-section existante, le WAGO principal, ou créez une nouvelle destination.",
         "data": {
-          "section_choice": "Nouvelle section / sous-section",
+          "section_choice": "Destination",
           "back": "⬅ Retour"
         }
       },
       "bulk_new_section": {
         "title": "Nouvelle destination",
-        "description": "Créez une section ou une sous-section puis tous les points sélectionnés y seront déplacés.",
+        "description": "Créez une section ou une sous-section ; tous les points sélectionnés y seront déplacés.",
         "data": {
           "parent_section": "Section parente",
           "section_name": "Nom de la nouvelle section",
@@ -244,11 +252,13 @@
       "point_required": "Sélectionnez un point pour cette action.",
       "points_required": "Sélectionnez au moins un point.",
       "section_required": "Saisissez un nom de section.",
-      "similar_section": "Une section au nom très proche existe déjà. Revenez à la liste pour l’utiliser ou choisissez un nom réellement différent.",
+      "similar_section": "Une section au nom très proche existe déjà. Utilisez la section existante ou choisissez un nom réellement différent.",
       "no_sections": "Aucune section n’est actuellement utilisée.",
       "invalid_point": "Le point est invalide ou entre en conflit avec la configuration.",
+      "invalid_address": "L’adresse Modbus saisie n’est pas valide.",
+      "address_out_of_range": "Cette adresse est hors de la plage configurée pour cette table Modbus. Modifiez d’abord la mémoire Modbus si nécessaire.",
       "too_many_points": "La limite de 100 points est atteinte.",
-      "invalid_csv": "Le fichier CSV est invalide. {details}",
+      "invalid_csv": "Le fichier CSV est invalide.",
       "file_required": "Choisissez un fichier CSV ou utilisez Retour.",
       "confirmation_required": "Confirmation requise."
     },
