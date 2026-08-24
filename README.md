@@ -1,1 +1,69 @@
-# wago_comm
+# WAGO 750-8212 PFC200 — Home Assistant
+
+Intégration Home Assistant locale pour exposer un **WAGO 750-8212 PFC200** via **Modbus/TCP**, sans Node-RED ni MQTT intermédiaire.
+
+La particularité de l'intégration est que les entités ne sont pas codées en dur : la table Modbus est entièrement configurable depuis Home Assistant et peut être remplie rapidement par import CSV.
+
+## Fonctionnalités
+
+- Modbus/TCP 100 % local
+- configuration et reconfiguration de l'adresse IP, du port et de l'Unit ID
+- timeout, délai de reconnexion et intervalle d'interrogation configurables
+- définition des quatre plages mémoire Modbus : Coils, Discrete Inputs, Holding Registers et Input Registers
+- jusqu'à **100 points configurables**
+- ajout, modification, duplication et suppression depuis Home Assistant
+- import et export CSV depuis l'interface Home Assistant
+- regroupement des lectures par blocs Modbus
+- sous-appareils Home Assistant basés sur la colonne `section`
+- `sensor`, `binary_sensor`, `switch`, `number`, `button`, `select`
+- `bool`, `uint16`, `int16`, `uint32`, `int32`, `float32`
+- facteur, offset, précision, min, max, pas et unité
+- extraction d'un bit dans un registre
+- inversion booléenne
+- ordre des octets et des mots
+- commandes impulsionnelles
+- relecture automatique après écriture
+- identifiant stable par point
+
+## Installation HACS
+
+Ajoutez `https://github.com/jptstar/wago_comm` comme dépôt personnalisé HACS de type **Intégration**.
+
+Installez ensuite **WAGO 750-8212 PFC200**, redémarrez Home Assistant et ajoutez l'intégration depuis **Paramètres → Appareils et services → Ajouter une intégration**.
+
+## Mémoire Modbus par défaut
+
+Les valeurs correspondent à la table CODESYS fournie :
+
+| Table | Start | Taille | Plage |
+|---|---:|---:|---:|
+| Coils | 0 | 48 | 0–47 |
+| Discrete Inputs | 50 | 8 | 50–57 |
+| Holding Registers | 60 | 40 | 60–99 |
+| Input Registers | 100 | 3 | 100–102 |
+
+Elles restent modifiables dans **Configurer → Mémoire Modbus**.
+
+## Import CSV
+
+Le fichier `examples/wago_points.csv` est prérempli avec les points explicitement présents dans les flows Node-RED transmis.
+
+Dans Home Assistant : **Configurer → Importer un CSV → choisir le fichier → Remplacer/Fusionner → vérifier → confirmer**.
+
+Le CSV est validé avant import : plages mémoire, types, écritures interdites, min/max/pas, facteur, bits, IDs, limite de 100 points, etc.
+
+Le menu **Exporter le CSV** écrit la table courante dans `/config/www/wago_exports/`, accessible via `/local/wago_exports/`.
+
+## Conversion
+
+`valeur HA = valeur brute × scale + offset`
+
+L'écriture applique automatiquement la conversion inverse.
+
+## Point à vérifier
+
+Les flows fournis utilisent le **Coil 21 à la fois pour “Gazon pool house” et “GG haies chemin”**. Le CSV conserve volontairement les deux lignes et l'import affichera un avertissement. Vérifiez l'adresse réelle dans CODESYS avant utilisation en production.
+
+## Version
+
+**0.1.0**
