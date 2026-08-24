@@ -1,0 +1,160 @@
+{
+  "title": "WAGO 750-8212 PFC200",
+  "config": {
+    "step": {
+      "user": {
+        "title": "Connexion Modbus/TCP",
+        "description": "Configurez la connexion au contrôleur WAGO.",
+        "data": {
+          "host": "Adresse IP / nom d’hôte",
+          "port": "Port",
+          "unit_id": "Unit ID",
+          "timeout": "Timeout (s)",
+          "reconnect_delay": "Délai de reconnexion (s)",
+          "scan_interval": "Intervalle d’interrogation (s)"
+        }
+      },
+      "memory": {
+        "title": "Mémoire Modbus",
+        "description": "Définissez l’adresse de départ et la taille de chaque table Modbus.",
+        "data": {
+          "coil_start": "Coils — adresse de départ",
+          "coil_size": "Coils — taille",
+          "discrete_start": "Discrete Inputs — adresse de départ",
+          "discrete_size": "Discrete Inputs — taille",
+          "holding_start": "Holding Registers — adresse de départ",
+          "holding_size": "Holding Registers — taille",
+          "input_start": "Input Registers — adresse de départ",
+          "input_size": "Input Registers — taille"
+        }
+      },
+      "reconfigure": {
+        "title": "Reconfigurer le WAGO",
+        "data": {
+          "host": "Adresse IP / nom d’hôte",
+          "port": "Port",
+          "unit_id": "Unit ID",
+          "timeout": "Timeout (s)",
+          "reconnect_delay": "Délai de reconnexion (s)",
+          "scan_interval": "Intervalle d’interrogation (s)"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Impossible de communiquer avec le WAGO."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Configuration WAGO",
+        "menu_options": {
+          "communication": "Communication",
+          "memory": "Mémoire Modbus",
+          "points": "Points Modbus",
+          "import_csv": "Importer un CSV",
+          "export_csv": "Exporter le CSV"
+        }
+      },
+      "communication": {
+        "title": "Communication",
+        "data": {
+          "unit_id": "Unit ID",
+          "timeout": "Timeout (s)",
+          "reconnect_delay": "Délai de reconnexion (s)",
+          "scan_interval": "Intervalle d’interrogation (s)"
+        }
+      },
+      "memory": {
+        "title": "Mémoire Modbus",
+        "description": "Les points existants doivent rester dans les nouvelles plages.",
+        "data": {
+          "coil_start": "Coils — adresse de départ",
+          "coil_size": "Coils — taille",
+          "discrete_start": "Discrete Inputs — adresse de départ",
+          "discrete_size": "Discrete Inputs — taille",
+          "holding_start": "Holding Registers — adresse de départ",
+          "holding_size": "Holding Registers — taille",
+          "input_start": "Input Registers — adresse de départ",
+          "input_size": "Input Registers — taille"
+        }
+      },
+      "points": {
+        "title": "Points Modbus",
+        "description": "Ajoutez, modifiez, dupliquez ou supprimez un point. Jusqu’à 100 points.",
+        "data": {
+          "action": "Action",
+          "point_id": "Point"
+        }
+      },
+      "point_form": {
+        "title": "Point Modbus",
+        "description": "Les champs non pertinents pour le type choisi sont ignorés.",
+        "data": {
+          "id": "ID stable",
+          "name": "Nom",
+          "section": "Section / sous-appareil",
+          "enabled": "Actif",
+          "platform": "Type d’entité Home Assistant",
+          "table": "Table Modbus",
+          "address": "Adresse",
+          "data_type": "Type de donnée",
+          "bit": "Bit (optionnel)",
+          "scale": "Facteur",
+          "offset": "Offset",
+          "precision": "Précision",
+          "min": "Minimum",
+          "max": "Maximum",
+          "step": "Pas",
+          "unit": "Unité",
+          "device_class": "Device class",
+          "state_class": "State class",
+          "read": "Lecture",
+          "write": "Écriture",
+          "inverted": "Inversé",
+          "read_after_write": "Relire après écriture",
+          "byte_order": "Ordre des octets",
+          "word_order": "Ordre des mots",
+          "command_mode": "Mode de commande",
+          "pulse_ms": "Durée impulsion (ms)",
+          "active_value": "Valeur active",
+          "return_value": "Valeur de retour",
+          "select_options": "Valeurs Select (0=Arrêt|1=Marche)",
+          "icon": "Icône MDI"
+        }
+      },
+      "delete_point": {
+        "title": "Supprimer le point",
+        "description": "Cette opération supprime l’entité après rechargement de l’intégration.",
+        "data": {"confirm": "Confirmer"}
+      },
+      "import_csv": {
+        "title": "Importer un tableau CSV",
+        "description": "Le CSV est contrôlé avant import. Utilisez le modèle fourni dans le dépôt.\n{details}",
+        "data": {"file": "Fichier CSV", "mode": "Mode d’import"}
+      },
+      "import_confirm": {
+        "title": "Confirmer l’import",
+        "description": "{summary}\n\n{details}",
+        "data": {"confirm": "Importer cette configuration"}
+      },
+      "export_csv": {
+        "title": "Exporter le tableau CSV",
+        "description": "Le fichier sera écrit dans /config/www/wago_exports et sera accessible via /local/wago_exports/.",
+        "data": {"confirm": "Créer le fichier CSV"}
+      }
+    },
+    "error": {
+      "memory_conflict": "Au moins un point existant se trouverait hors des nouvelles plages.",
+      "point_required": "Sélectionnez un point pour cette action.",
+      "invalid_point": "Le point est invalide ou entre en conflit avec la configuration.",
+      "too_many_points": "La limite de 100 points est atteinte.",
+      "invalid_csv": "Le fichier CSV est invalide. {details}",
+      "confirmation_required": "Confirmation requise."
+    },
+    "abort": {
+      "invalid_csv": "Le fichier CSV est invalide.",
+      "export_ok": "CSV créé : {path} — URL locale : {url}"
+    }
+  }
+}
