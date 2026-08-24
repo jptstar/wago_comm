@@ -1,6 +1,6 @@
-# WAGO 750-8212 PFC200 Modbus — Home Assistant
+# WAGO Modbus — Home Assistant
 
-Intégration Home Assistant locale pour exposer un **WAGO 750-8212 PFC200** via **Modbus/TCP**, sans Node-RED ni MQTT intermédiaire.
+Intégration Home Assistant locale pour exposer un **WAGO 750-8212 PFC200** via **Modbus/TCP**.
 
 La particularité de l'intégration est que les entités ne sont pas codées en dur : la table Modbus est entièrement configurable depuis Home Assistant et peut être remplie rapidement par import CSV.
 
