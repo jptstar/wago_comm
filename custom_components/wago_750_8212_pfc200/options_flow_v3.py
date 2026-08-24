@@ -6,7 +6,7 @@ from typing import Any
 
 import voluptuous as vol
 
-from homeassistant.components.binary_sensor.const import BinarySensorDeviceClass
+from homeassistant.components.binary_sensor import BinarySensorDeviceClass
 from homeassistant.components.number.const import NumberDeviceClass
 from homeassistant.components.sensor.const import SensorDeviceClass, SensorStateClass
 from homeassistant.config_entries import ConfigFlowResult
