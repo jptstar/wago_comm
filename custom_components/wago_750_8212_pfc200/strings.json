@@ -1,5 +1,5 @@
 {
-  "title": "WAGO 750-8212 PFC200",
+  "title": "WAGO 750-8212 PFC200 Modbus",
   "config": {
     "step": {
       "user": {
@@ -52,7 +52,7 @@
           "communication": "Communication",
           "memory": "Mémoire Modbus",
           "points": "Points Modbus",
-          "sections": "Gérer les sections",
+          "sections": "Déplacer des entités entre sections",
           "import_csv": "Importer un CSV",
           "export_csv": "Exporter le CSV"
         }
@@ -85,35 +85,10 @@
       },
       "points": {
         "title": "Points Modbus",
-        "description": "Ajoutez, modifiez, dupliquez, supprimez ou déplacez plusieurs points. Les sections et sous-sections vides sont supprimées automatiquement.",
+        "description": "Ajoutez, modifiez, dupliquez, supprimez ou déplacez plusieurs entités. Les sections et sous-sections vides sont supprimées automatiquement.",
         "data": {
           "action": "Action",
           "point_id": "Point"
-        }
-      },
-      "sections": {
-        "title": "Gérer les sections",
-        "description": "Sélectionnez une section ou sous-section. Le nombre indiqué inclut ses sous-sections. Vous pourrez ensuite la renommer, la déplacer ou la fusionner avec une autre.",
-        "data": {
-          "source_section": "Section / sous-section",
-          "back": "⬅ Retour au menu"
-        }
-      },
-      "section_destination": {
-        "title": "Déplacer ou fusionner la section",
-        "description": "Choisissez une section existante pour fusionner, le WAGO principal pour retirer ce niveau, ou « Renommer / nouvelle destination ».",
-        "data": {
-          "section_choice": "Destination",
-          "back": "⬅ Retour"
-        }
-      },
-      "section_new_destination": {
-        "title": "Renommer / déplacer la section",
-        "description": "Le changement est appliqué à tous les points de cette section et de ses sous-sections.",
-        "data": {
-          "parent_section": "Nouvelle section parente",
-          "section_name": "Nouveau nom",
-          "back": "⬅ Retour"
         }
       },
       "point_form": {
@@ -196,25 +171,33 @@
           "back": "⬅ Retour"
         }
       },
-      "bulk_move_select": {
-        "title": "Déplacer plusieurs points",
-        "description": "Sélectionnez les entités auxquelles appliquer la même section ou sous-section.",
+      "bulk_move_source": {
+        "title": "Section source",
+        "description": "Choisissez la section ou sous-section contenant les entités à déplacer. À l’étape suivante, vous sélectionnerez uniquement les entités à déplacer.",
         "data": {
-          "point_ids": "Points à déplacer",
+          "source_section": "Section / sous-section source",
+          "back": "⬅ Retour"
+        }
+      },
+      "bulk_move_select": {
+        "title": "Entités à déplacer",
+        "description": "Sélectionnez une ou plusieurs entités de la section source. Les autres entités resteront exactement où elles sont.",
+        "data": {
+          "point_ids": "Entités à déplacer",
           "back": "⬅ Retour"
         }
       },
       "bulk_move_section": {
-        "title": "Destination des points",
-        "description": "Choisissez une section ou sous-section existante, le WAGO principal, ou créez une nouvelle destination.",
+        "title": "Section destination",
+        "description": "Choisissez la section ou sous-section de destination. Seules les entités sélectionnées seront déplacées.",
         "data": {
-          "section_choice": "Destination",
+          "section_choice": "Section / sous-section destination",
           "back": "⬅ Retour"
         }
       },
       "bulk_new_section": {
         "title": "Nouvelle destination",
-        "description": "Créez une section ou une sous-section ; tous les points sélectionnés y seront déplacés.",
+        "description": "Créez une section ou une sous-section ; seules les entités sélectionnées y seront déplacées.",
         "data": {
           "parent_section": "Section parente",
           "section_name": "Nom de la nouvelle section",
@@ -250,10 +233,11 @@
     "error": {
       "memory_conflict": "Au moins un point existant se trouverait hors des nouvelles plages.",
       "point_required": "Sélectionnez un point pour cette action.",
-      "points_required": "Sélectionnez au moins un point.",
+      "points_required": "Sélectionnez au moins une entité.",
       "section_required": "Saisissez un nom de section.",
       "similar_section": "Une section au nom très proche existe déjà. Utilisez la section existante ou choisissez un nom réellement différent.",
       "no_sections": "Aucune section n’est actuellement utilisée.",
+      "no_points": "Aucune entité configurable n’est disponible.",
       "invalid_point": "Le point est invalide ou entre en conflit avec la configuration.",
       "invalid_address": "L’adresse Modbus saisie n’est pas valide.",
       "address_out_of_range": "Cette adresse est hors de la plage configurée pour cette table Modbus. Modifiez d’abord la mémoire Modbus si nécessaire.",
