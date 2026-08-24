@@ -1,5 +1,5 @@
 {
-  "name": "WAGO 750-8212 PFC200",
+  "name": "WAGO 750-8212 PFC200 Modbus",
   "render_readme": true,
   "homeassistant": "2026.8.0",
   "hide_default_branch": true
