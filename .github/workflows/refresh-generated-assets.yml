@@ -43,8 +43,7 @@ jobs:
           icon2x = icon.resize((512, 512), Image.Resampling.LANCZOS)
           icon2x.save(brand / "icon@2x.png", optimize=True)
 
-          # Match the structure used by wiserlink_mpi: same square artwork for
-          # integration icon and logo, with standard and HiDPI variants.
+          # Match wiserlink_mpi: one square transparent artwork for icon/logo.
           icon.save(brand / "logo.png", optimize=True)
           icon2x.save(brand / "logo@2x.png", optimize=True)
           PY
