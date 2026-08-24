@@ -1,4 +1,4 @@
-"""Constants for WAGO 750-8212 PFC200."""
+"""Constants for WAGO 750-8212 PFC200 Modbus."""
 
 from __future__ import annotations
 
@@ -7,7 +7,7 @@ from typing import Final
 from homeassistant.const import Platform
 
 DOMAIN: Final = "wago_750_8212_pfc200"
-NAME: Final = "WAGO 750-8212 PFC200"
+NAME: Final = "WAGO 750-8212 PFC200 Modbus"
 MANUFACTURER: Final = "WAGO"
 MODEL: Final = "750-8212 PFC200"
 
