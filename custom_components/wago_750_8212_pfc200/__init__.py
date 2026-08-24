@@ -12,7 +12,6 @@ from homeassistant.helpers import device_registry as dr
 from homeassistant.helpers import entity_registry as er
 
 from .api import WagoCommunicationError, WagoModbusClient
-from .config_flow import _memory_for_entry
 from .const import (
     CONF_RECONNECT_DELAY,
     CONF_SCAN_INTERVAL,
@@ -28,6 +27,7 @@ from .const import (
     PLATFORMS,
 )
 from .coordinator import WagoCoordinator
+from .flow_helpers import memory_for_entry
 from .sections import (
     section_identifier,
     section_leaf,
@@ -122,7 +122,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: WagoConfigEntry) -> bool
     coordinator = WagoCoordinator(
         hass,
         api,
-        _memory_for_entry(entry),
+        memory_for_entry(entry),
         int(
             entry.options.get(
                 CONF_SCAN_INTERVAL,
