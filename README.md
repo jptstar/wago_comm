@@ -13,6 +13,8 @@ La particularité de l'intégration est que les entités ne sont pas codées en 
 - jusqu'à **100 points configurables**
 - ajout, modification, duplication et suppression depuis Home Assistant
 - déplacement simultané de plusieurs points vers une même section ou sous-section
+- gestion complète des sections : renommer, déplacer ou fusionner une section et toute sa hiérarchie
+- détection des doublons de sections dus à la casse, aux espaces, à la ponctuation ou à un nom très proche
 - navigation **Retour** dans l'assistant de configuration des points
 - import et export CSV depuis l'interface Home Assistant
 - regroupement des lectures par blocs Modbus
@@ -74,6 +76,21 @@ Dans **Configurer → Points Modbus → Déplacer plusieurs points**, sélection
 
 La nouvelle section est appliquée à tous les points sélectionnés en une seule opération. Les anciennes sections devenues vides sont ensuite supprimées automatiquement.
 
+## Gestion des sections
+
+Dans **Configurer → Gérer les sections**, chaque section et sous-section affiche le nombre de points qu'elle contient, y compris ses enfants.
+
+Une section peut être :
+
+- renommée ;
+- déplacée sous une autre section ;
+- fusionnée avec une section existante ;
+- déplacée vers le WAGO principal.
+
+L'opération s'applique automatiquement à tous ses points et sous-sections. L'ancienne section disparaît dès qu'elle est vide.
+
+Pour éviter les doublons comme `Filtration Puit`, `Filtration. Puit` ou des variantes de casse/ponctuation, les nouveaux noms sont comparés aux sections existantes. Les équivalents de ponctuation/casse réutilisent la section existante ; les noms très proches déclenchent un avertissement.
+
 ## Import CSV
 
 Le fichier `examples/wago_points.csv` est prérempli avec les points explicitement présents dans les flows Node-RED transmis.
@@ -98,4 +115,4 @@ Les flows fournis utilisent le **Coil 21 à la fois pour “Gazon pool house” 
 
 ## Version
 
-**0.1.2**
+**0.1.3**
