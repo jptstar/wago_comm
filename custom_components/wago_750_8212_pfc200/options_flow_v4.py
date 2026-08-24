@@ -15,6 +15,9 @@ class WagoOptionsFlowV4(WagoOptionsFlowV3):
         """Return a direct download link instead of writing into /config/www."""
         url = f"/api/{DOMAIN}/export/{self._entry.entry_id}.csv"
         return self.async_abort(
-            reason="export_ready",
-            description_placeholders={"url": url},
+            reason="export_ok",
+            description_placeholders={
+                "path": "prêt à télécharger",
+                "url": f"[Télécharger le CSV]({url})",
+            },
         )
