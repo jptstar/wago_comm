@@ -73,9 +73,22 @@ def _bool(value: Any, default: bool = False) -> bool:
     return default
 
 
+def _integer(value: Any, *, default: int | None = None) -> int:
+    """Parse an integer while accepting spreadsheet forms such as 12.0 or 12,0."""
+    text = str(value if value is not None else "").strip()
+    if not text:
+        if default is not None:
+            return default
+        raise ValueError("valeur entière vide")
+    number = float(text.replace(",", "."))
+    if not number.is_integer():
+        raise ValueError(f"valeur entière attendue, reçu '{text}'")
+    return int(number)
+
+
 def _optional_int(value: Any) -> int | None:
     text = str(value if value is not None else "").strip()
-    return None if not text else int(float(text.replace(",", ".")))
+    return None if not text else _integer(text)
 
 
 def _optional_float(value: Any) -> float | None:
@@ -104,7 +117,7 @@ def normalize_point(row: dict[str, Any]) -> dict[str, Any]:
         "name": name,
         "platform": platform,
         "table": table,
-        "address": int(str(row.get("address", "0")).strip()),
+        "address": _integer(row.get("address"), default=0),
         "data_type": data_type,
         "scale": _optional_float(row.get("scale")) or 1.0,
         "offset": _optional_float(row.get("offset")) or 0.0,
@@ -261,5 +274,15 @@ def export_csv_text(points: list[dict[str, Any]]) -> str:
         row = {field: point.get(field, "") for field in CSV_FIELDS}
         for field in ("enabled", "read", "write", "inverted", "read_after_write"):
             row[field] = "oui" if bool(point.get(field, False)) else "non"
+        # Keep integer fields spreadsheet-friendly and round-trip safe.
+        for field in ("address", "bit", "precision", "pulse_ms"):
+            value = row.get(field)
+            if value not in (None, ""):
+                try:
+                    number = float(str(value).replace(",", "."))
+                except (TypeError, ValueError):
+                    continue
+                if number.is_integer():
+                    row[field] = str(int(number))
         writer.writerow(row)
     return output.getvalue()
