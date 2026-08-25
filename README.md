@@ -1,5 +1,9 @@
 # WAGO 750-8212 PFC200 Modbus — Home Assistant
 
+<p align="center">
+  <img src="brand/logo.png" alt="WAGO 750-8212 PFC200 Modbus" width="220">
+</p>
+
 Intégration Home Assistant locale pour exposer un **WAGO 750-8212 PFC200** via **Modbus/TCP**.
 
 Les entités ne sont pas codées en dur : la table Modbus est entièrement configurable depuis Home Assistant et peut être remplie rapidement par import CSV.
@@ -33,7 +37,19 @@ Les entités ne sont pas codées en dur : la table Modbus est entièrement confi
 - relecture automatique après écriture
 - identifiant stable par point
 - diagnostics de communication sur le WAGO principal
-- logo et icône locaux Home Assistant dans `brand/`
+- logo et icône transparents dédiés pour HACS et Home Assistant
+
+## Branding
+
+Le branding représente le contrôleur WAGO dans un style dessin technique, sans ombre et sur fond transparent.
+
+Les variantes sont générées automatiquement avec des marges de sécurité afin d'éviter tout recadrage dans Home Assistant :
+
+- `brand/` — branding du dépôt / HACS ;
+- `custom_components/wago_750_8212_pfc200/brand/` — branding local Home Assistant ;
+- `icon.png` et `logo.png` en 256 × 256 ;
+- `icon@2x.png` et `logo@2x.png` en 512 × 512 ;
+- variantes `dark_*` incluses.
 
 ## Diagnostics du WAGO principal
 
@@ -124,4 +140,4 @@ Les flows fournis utilisent le **Coil 21 à la fois pour “Gazon pool house” 
 
 ## Version
 
-**0.1.10**
+**0.1.17**
