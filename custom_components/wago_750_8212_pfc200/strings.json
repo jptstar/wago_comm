@@ -223,9 +223,9 @@
       },
       "export_csv": {
         "title": "Exporter le tableau CSV",
-        "description": "Le fichier sera écrit dans /config/www/wago_exports et sera accessible via /local/wago_exports/.",
+        "description": "Prépare un téléchargement direct du tableau actuel. Aucun fichier permanent n’est créé dans /config/www.",
         "data": {
-          "confirm": "Créer le fichier CSV",
+          "confirm": "Préparer le téléchargement CSV",
           "back": "⬅ Retour au menu"
         }
       }
@@ -248,7 +248,7 @@
     },
     "abort": {
       "invalid_csv": "Le fichier CSV est invalide.",
-      "export_ok": "CSV créé : {path} — URL locale : {url}"
+      "export_ok": "CSV prêt : {url}\n\nLe lien reste valable {path}. Un clic normal suffit."
     }
   }
 }
