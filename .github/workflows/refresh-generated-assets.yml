@@ -4,6 +4,7 @@ on:
   push:
     paths:
       - "tools/update_generated_assets.py"
+      - "tools/wago_brand_icon.b64"
       - ".github/workflows/refresh-generated-assets.yml"
   workflow_dispatch:
 
@@ -27,25 +28,55 @@ jobs:
       - name: Refresh CSV profile and translations
         run: python tools/update_generated_assets.py
 
-      - name: Build Home Assistant brand variants
+      - name: Build Home Assistant and HACS brand variants
         run: |
           python -m pip install --disable-pip-version-check pillow
           python - <<'PY'
+          import base64
+          from io import BytesIO
           from pathlib import Path
           from PIL import Image
 
-          brand = Path("custom_components/wago_750_8212_pfc200/brand")
-          icon = Image.open(brand / "icon.png").convert("RGBA")
-          if icon.size != (256, 256):
-              icon = icon.resize((256, 256), Image.Resampling.LANCZOS)
-              icon.save(brand / "icon.png", optimize=True)
+          source_b64 = Path("tools/wago_brand_icon.b64").read_text(encoding="utf-8").strip()
+          source = Image.open(BytesIO(base64.b64decode(source_b64))).convert("RGBA")
 
-          icon2x = icon.resize((512, 512), Image.Resampling.LANCZOS)
-          icon2x.save(brand / "icon@2x.png", optimize=True)
+          alpha = source.getchannel("A")
+          mask = alpha.point(lambda a: 255 if a > 8 else 0)
+          bbox = mask.getbbox()
+          if bbox is None:
+              raise RuntimeError("WAGO branding source has no visible pixels")
+          artwork = source.crop(bbox)
 
-          # Match wiserlink_mpi: one square transparent artwork for icon/logo.
-          icon.save(brand / "logo.png", optimize=True)
-          icon2x.save(brand / "logo@2x.png", optimize=True)
+          def fit(size: int, occupancy: float) -> Image.Image:
+              max_side = int(size * occupancy)
+              scale = min(max_side / artwork.width, max_side / artwork.height)
+              width = max(1, round(artwork.width * scale))
+              height = max(1, round(artwork.height * scale))
+              resized = artwork.resize((width, height), Image.Resampling.LANCZOS)
+              canvas = Image.new("RGBA", (size, size), (0, 0, 0, 0))
+              canvas.alpha_composite(resized, ((size - width) // 2, (size - height) // 2))
+              return canvas
+
+          variants = {
+              "icon.png": fit(256, 0.68),
+              "icon@2x.png": fit(512, 0.68),
+              "logo.png": fit(256, 0.78),
+              "logo@2x.png": fit(512, 0.78),
+          }
+
+          destinations = [
+              Path("brand"),
+              Path("custom_components/wago_750_8212_pfc200/brand"),
+          ]
+
+          for destination in destinations:
+              destination.mkdir(parents=True, exist_ok=True)
+              for name, image in variants.items():
+                  image.save(destination / name, optimize=True)
+              variants["icon.png"].save(destination / "dark_icon.png", optimize=True)
+              variants["icon@2x.png"].save(destination / "dark_icon@2x.png", optimize=True)
+              variants["logo.png"].save(destination / "dark_logo.png", optimize=True)
+              variants["logo@2x.png"].save(destination / "dark_logo@2x.png", optimize=True)
           PY
 
       - name: Commit generated files
@@ -55,10 +86,8 @@ jobs:
           git add examples/wago_points.csv \
             custom_components/wago_750_8212_pfc200/strings.json \
             custom_components/wago_750_8212_pfc200/translations/fr.json \
-            custom_components/wago_750_8212_pfc200/brand/icon.png \
-            custom_components/wago_750_8212_pfc200/brand/icon@2x.png \
-            custom_components/wago_750_8212_pfc200/brand/logo.png \
-            custom_components/wago_750_8212_pfc200/brand/logo@2x.png
+            custom_components/wago_750_8212_pfc200/brand \
+            brand
           if git diff --cached --quiet; then
             echo "Nothing to refresh"
             exit 0
