@@ -127,6 +127,17 @@ def patch_profile() -> None:
         fieldnames = list(reader.fieldnames or [])
         rows = list(reader)
 
+    # Preserve legacy notes containing unquoted semicolons. DictReader stores
+    # surplus fields under the None key; fold them back into the notes column
+    # before rewriting the file so no rows are lost or truncated.
+    for row in rows:
+        extras = row.pop(None, None)
+        if extras:
+            suffix = ";".join(value for value in extras if value not in (None, ""))
+            if suffix:
+                notes = row.get("notes") or ""
+                row["notes"] = f"{notes};{suffix}" if notes else suffix
+
     by_id = {row["id"]: row for row in rows}
 
     # CODESYS screenshots 2026-08-24 resolve the old duplicate Coil 21.

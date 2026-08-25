@@ -26,7 +26,6 @@ jobs:
           python-version: "3.13"
 
       - name: Refresh CSV profile and translations
-        continue-on-error: true
         run: python tools/update_generated_assets.py
 
       - name: Build Home Assistant and HACS brand variants

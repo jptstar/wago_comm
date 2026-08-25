@@ -33,8 +33,35 @@ oui;valve_sewer_state;Arrivée d'eau;Vanne égout;binary_sensor;discrete_input;5
 oui;valve_well_state;Arrivée d'eau;Vanne arrivée puits;binary_sensor;discrete_input;52;bool;;1.0;0.0;;;;;;;;oui;non;non;oui;big;big;normal;300;1;0;;mdi:valve;
 oui;valve_bypass_state;Arrivée d'eau;Vanne bypass;binary_sensor;discrete_input;53;bool;;1.0;0.0;;;;;;;;oui;non;non;oui;big;big;normal;300;1;0;;mdi:valve;
 oui;valve_city_water_state;Arrivée d'eau;Vanne eau de ville;binary_sensor;discrete_input;54;bool;;1.0;0.0;;;;;;;;oui;non;non;oui;big;big;normal;300;1;0;;mdi:valve;
-oui;pool_fill_valve_state;Arrivée d'eau;Vanne remplissage piscine;binary_sensor;discrete_input;56;bool;;1.0;0.0;;;;;;;;oui;non;non;oui;big;big;normal;300;1;0;;mdi:pool;"Ancien mapping Node-RED DI56 ; non mappé sur les captures CODESYS du 24/08/2026 — à vérifier."
+oui;pool_fill_valve_state;Arrivée d'eau;Vanne remplissage piscine;binary_sensor;discrete_input;56;bool;;1.0;0.0;;;;;;;;oui;non;non;oui;big;big;normal;300;1;0;;mdi:pool;Mapping historique Node-RED : Discrete Input 56. À confirmer sur le mapping CODESYS actuel.
 oui;filter_pressure_before;Filtration puits;Pression avant filtre;sensor;holding_register;60;uint16;;0.01;0.0;2;0;10;0.01;bar;pressure;measurement;oui;non;non;oui;big;big;normal;300;1;0;;mdi:gauge;
 oui;filter_pressure_after;Filtration puits;Pression après filtre;sensor;holding_register;61;uint16;;0.01;0.0;2;0;10;0.01;bar;pressure;measurement;oui;non;non;oui;big;big;normal;300;1;0;;mdi:gauge;
 oui;filter_pressure_delta;Filtration puits;Pression différentielle;sensor;holding_register;62;uint16;;0.01;0.0;2;0;10;0.01;bar;pressure;measurement;oui;non;non;oui;big;big;normal;300;1;0;;mdi:gauge;
 oui;filter_step;Filtration puits;Étape filtration;sensor;holding_register;63;uint16;;1.0;0.0;0;;;;;;;oui;non;non;oui;big;big;normal;300;1;0;;mdi:state-machine;
+oui;filter_pressure_delta_threshold;Backwash;Seuil pression différentielle backwash;number;holding_register;64;uint16;;0.01;0.0;2;0;10;0.01;bar;;;oui;oui;non;oui;big;big;normal;300;1;0;;mdi:gauge;CODESYS : mSeuilPressionDifferentielle (HR64). Écriture en bar ×100 ; l’intégration pulse automatiquement Coil 6 après modification.
+oui;city_water_volume;Arrivée d'eau;Compteur eau de ville;sensor;holding_register;66;uint16;;0.001;0.0;3;;;;m³;water;total_increasing;oui;non;non;oui;big;big;normal;300;1;0;;mdi:water;
+oui;city_water_flow;Arrivée d'eau;Débit eau de ville;sensor;holding_register;67;uint16;;1.0;0.0;;;;;L/min;volume_flow_rate;measurement;oui;non;non;oui;big;big;normal;300;1;0;;mdi:waves-arrow-right;
+oui;lawn_terrace_base_duration;Arrosage gazon;Durée de base gazon terrasse;number;holding_register;70;uint16;;1.0;0.0;0;0;600;1.0;min;;;oui;oui;non;oui;big;big;normal;300;1;0;;mdi:timer-cog;CODESYS uiBaseDurationMin[1], plage recommandée 0–600 min.
+oui;lawn_slope_base_duration;Arrosage gazon;Durée de base gazon butte;number;holding_register;71;uint16;;1.0;0.0;0;0;600;1;min;;;oui;oui;non;oui;big;big;normal;300;1;0;;mdi:timer-cog;CODESYS : uiBaseDurationMin[2].
+oui;lawn_pool_base_duration;Arrosage gazon;Durée de base gazon piscine;number;holding_register;72;uint16;;1.0;0.0;0;0;600;1;min;;;oui;oui;non;oui;big;big;normal;300;1;0;;mdi:timer-cog;CODESYS : uiBaseDurationMin[3].
+oui;lawn_poolhouse_base_duration;Arrosage gazon;Durée de base gazon pool house;number;holding_register;73;uint16;;1.0;0.0;0;0;600;1;min;;;oui;oui;non;oui;big;big;normal;300;1;0;;mdi:timer-cog;CODESYS : uiBaseDurationMin[4].
+oui;lawn_circuit5_base_duration;Arrosage gazon;Durée de base circuit gazon 5;number;holding_register;74;uint16;;1.0;0.0;0;0;600;1;min;;;oui;oui;non;oui;big;big;normal;300;1;0;;mdi:timer-cog;CODESYS : uiBaseDurationMin[5].
+oui;lawn_cycles;Arrosage gazon;Cycles;number;holding_register;75;uint16;;1.0;0.0;0;0;65535;1.0;;;;oui;oui;non;oui;big;big;normal;300;1;0;;mdi:repeat;
+oui;lawn_multiplier;Arrosage gazon;Multiplicateur;number;holding_register;76;uint16;;0.1;0.0;1;0;6553.5;0.1;;;;oui;oui;non;oui;big;big;normal;300;1;0;;mdi:multiplication;
+oui;lawn_mode;Arrosage gazon;Mode;sensor;holding_register;77;uint16;;1.0;0.0;0;;;;;;;oui;non;non;oui;big;big;normal;300;1;0;;mdi:state-machine;CODESYS : uiStatus_Mode.
+oui;lawn_active_circuit;Arrosage gazon;Circuit actif;sensor;holding_register;78;uint16;;1.0;0.0;0;;;;;;;oui;non;non;oui;big;big;normal;300;1;0;;mdi:sprinkler-variant;
+oui;lawn_cycles_done;Arrosage gazon;Cycles effectués;sensor;holding_register;79;uint16;;1.0;0.0;0;;;;;;;oui;non;non;oui;big;big;normal;300;1;0;;mdi:counter;CODESYS : uiStatus_CyclesDone.
+oui;lawn_remaining_time;Arrosage gazon;Temps restant;sensor;holding_register;80;uint16;;1.0;0.0;0;;;;min;;;oui;non;non;oui;big;big;normal;300;1;0;;mdi:timer-sand;
+oui;lawn_active;Arrosage gazon;Arrosage actif;binary_sensor;holding_register;81;uint16;;1.0;0.0;;;;;;;;oui;non;non;oui;big;big;normal;300;1;0;;mdi:sprinkler;CODESYS : uiStatus_Active.
+oui;drip_hedge_path_base_duration;Arrosage goutte-à-goutte;Durée de base haies chemin;number;holding_register;82;uint16;;1.0;0.0;0;0;600;1;min;;;oui;oui;non;oui;big;big;normal;300;1;0;;mdi:timer-cog;CODESYS : uiGG_BaseDurationMin[1].
+oui;drip_circuit2_base_duration;Arrosage goutte-à-goutte;Durée de base circuit GG 2;number;holding_register;83;uint16;;1.0;0.0;0;0;600;1;min;;;oui;oui;non;oui;big;big;normal;300;1;0;;mdi:timer-cog;CODESYS : uiGG_BaseDurationMin[2].
+oui;drip_circuit3_base_duration;Arrosage goutte-à-goutte;Durée de base circuit GG 3;number;holding_register;84;uint16;;1.0;0.0;0;0;600;1;min;;;oui;oui;non;oui;big;big;normal;300;1;0;;mdi:timer-cog;CODESYS : uiGG_BaseDurationMin[3].
+oui;drip_circuit4_base_duration;Arrosage goutte-à-goutte;Durée de base circuit GG 4;number;holding_register;85;uint16;;1.0;0.0;0;0;600;1;min;;;oui;oui;non;oui;big;big;normal;300;1;0;;mdi:timer-cog;CODESYS : uiGG_BaseDurationMin[4].
+oui;drip_circuit5_base_duration;Arrosage goutte-à-goutte;Durée de base circuit GG 5;number;holding_register;86;uint16;;1.0;0.0;0;0;600;1;min;;;oui;oui;non;oui;big;big;normal;300;1;0;;mdi:timer-cog;CODESYS : uiGG_BaseDurationMin[5].
+oui;drip_cycles;Arrosage goutte-à-goutte;Cycles;number;holding_register;87;uint16;;1.0;0.0;0;0;65535;1.0;;;;oui;oui;non;oui;big;big;normal;300;1;0;;mdi:repeat;
+oui;drip_multiplier;Arrosage goutte-à-goutte;Multiplicateur;number;holding_register;88;uint16;;0.1;0.0;1;0;6553.5;0.1;;;;oui;oui;non;oui;big;big;normal;300;1;0;;mdi:multiplication;
+oui;drip_mode;Arrosage goutte-à-goutte;Mode;sensor;holding_register;89;uint16;;1.0;0.0;0;;;;;;;oui;non;non;oui;big;big;normal;300;1;0;;mdi:state-machine;CODESYS : uiGG_Status_Mode.
+oui;drip_active_circuit;Arrosage goutte-à-goutte;Circuit actif;sensor;holding_register;90;uint16;;1.0;0.0;0;;;;;;;oui;non;non;oui;big;big;normal;300;1;0;;mdi:water-outline;
+oui;drip_cycles_done;Arrosage goutte-à-goutte;Cycles effectués;sensor;holding_register;91;uint16;;1.0;0.0;0;;;;;;;oui;non;non;oui;big;big;normal;300;1;0;;mdi:counter;CODESYS : uiGG_Status_CyclesDone.
+oui;drip_remaining_time;Arrosage goutte-à-goutte;Temps restant;sensor;holding_register;92;uint16;;1.0;0.0;0;;;;min;;;oui;non;non;oui;big;big;normal;300;1;0;;mdi:timer-sand;
+oui;drip_active;Arrosage goutte-à-goutte;Goutte-à-goutte actif;binary_sensor;holding_register;93;uint16;;1.0;0.0;;;;;;;;oui;non;non;oui;big;big;normal;300;1;0;;mdi:water-check;CODESYS : uiGG_Status_Active.
